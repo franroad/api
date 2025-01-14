@@ -47,7 +47,7 @@ def get_posts():
     return{"data": "this is your posts"}
 
 @app.post("/createpost")
-def create_posts(new_post: Post): #We are refenrcing the Post class that validates if the post meets the scheme requirements
+def create_posts(new_post: Post): #We are refenrcing the Post class that validates if the post meets the scheme requirements(pydantic)
     print (new_post)
     print (new_post.dict()) # We can convert the pydantic model into a dict
     return{"data": "new post added: " f"title: {new_post.title}"} # accessing the title attribute of  new_poost
