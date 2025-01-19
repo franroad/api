@@ -11,6 +11,18 @@
 # POSTMAN
 Used in test section for testing purposes but there are no schema.
 
+Example call:
+```json
+
+{
+"title":"hello from miami" ,
+"content":"this is a test",
+"published": "true",
+"rating": "1"
+
+}
+```
 # Pydantic
-- for validating , for defining an schema that the user must accomplis
+- for validating , for defining an schema that the user must accomplish. Thanks to Pydantic we make sure that the field ``rating`` for example, is an integer.
+
 
