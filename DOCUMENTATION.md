@@ -56,3 +56,37 @@ def create_posts(new_post: Post): #We are refenrcing the Post class that validat
 #title str, content str, category
 
 ```
+
+## 2 creating a global variable and retrieving the info stored in the variable
+```python
+from typing import Optional
+from fastapi import FastAPI #import the library
+from fastapi.params import Body
+from pydantic import BaseModel
+
+app=FastAPI() #create instance of fastapi
+
+class Post (BaseModel): # here we use pydantic for define the schema
+    title: str
+    content: str
+    published: bool = True # this is an optional/odefault to true
+    rating: Optional[int]= None #Optional filed with no default value , type integer
+    
+my_posts= [{"id":1,"title": "this is the post 1","content":"content of post"},{"id":2,"title": "this is the post 2","content":"pizza"}] #creating a global variable for storing the posts in memory (not using ddbb)  it's an array/dict  
+
+@app.get("/")#the route where to find the stuff /fran would be: http://127.0.0.1:8000/fran (decorator , endpoint)
+def root(): #root=funtion name (does not matter)
+    return {"message": "Hello World"}
+
+@app.get("/posts")
+def get_posts():
+    return{"data": my_posts} #passing the variable
+
+@app.post("/posts")
+def create_posts(new_post: Post): #We are refenrcing the Post class that validates if the post meets the scheme requirements(pydantic)
+    print (new_post)# print is internal, we are not retunring info to the client.
+    print (new_post.dict()) #Converting  the Pydantic model into a dict
+    return{"message_from_server": "new post added, " f"title: {new_post.title}"} # accessing the title attribute of  new_poost
+
+#title str, content str, category
+```
