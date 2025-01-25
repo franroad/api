@@ -55,6 +55,17 @@ def find_post(id):
     print(id)
     return None  # In case no matching id is found
 
+#Function to find index
+def find_index(id):
+    for i,p in enumerate(my_posts):#i is index
+        if p['id']==id:
+            return i,p #returning the index and the array
+    return None , None
+         
+        
+            
+       
+
 
 
 #retrieving post by id
@@ -70,14 +81,28 @@ def get_post(id: int,response: Response):#performing validation with fast api we
         # return {"error": f"Post not found ID: {id}"}  # Returns an error message if no matching post is found
 
 
-#deleting post by id
-@app.delete("/posts/{id}")
-def delete_post(id: int,response: Response):
-    del_post=find_post(id)
+#deleting post by id 
+# @app.delete("/posts/{id}")
+# def delete_post(id: int,response: Response):
+#     del_post=find_post(id)
     
-    if del_post: 
-        title=del_post['title'] #this way we make sure it exsists before accessing title
-        my_posts.remove(del_post)
-        return {"message":f"Post: {title} Deleted succesfully"}
+#     if del_post: 
+#         title=del_post['title'] #this way we make sure it exsists before accessing title
+#         my_posts.remove(del_post)
+#         return {"message":f"Post: {title} Deleted succesfully"}
+#     else:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": f"Post not found ID: {id}"})
+
+#deleting post by index
+
+@app.delete("/posts/{id}")
+def delete_post(id: int, response : Response):
+    index, post=find_index(id)
+    if post:
+        title=post['title']
+        my_posts.pop(index)
+        return {"info": f"Post: {title} , Succesfully deleted"}
     else:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": f"Post not found ID: {id}"})
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with {id} not found"} )
+
+

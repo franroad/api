@@ -35,7 +35,7 @@ for i, p in enumerate(my_posts):
 ```
 **OUTPUT**
 ```python
- Index: 0, ID: 1, Title: Post 1, Content: Content of post 1
+Index: 0, ID: 1, Title: Post 1, Content: Content of post 1
 Index: 1, ID: 2, Title: Post 2, Content: Content of post 2
 Index: 2, ID: 3, Title: Post 3, Content: Content of post 3
 ```

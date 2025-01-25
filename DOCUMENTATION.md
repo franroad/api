@@ -168,3 +168,75 @@ def get_post(id: int,response: Response):#This generates an instance of Response
 **Adding it at decorator**
 ``@app.post("/posts", status_code=status.HTTP_201_CREATED)`` 
 
+# 6 Delete post old/ new find post fucntion
+
+- Variable
+
+```Python
+my_posts= [{"id":1,"title": "this is the post 1","content":"content of post"},
+           {"id":2,"title": "this is the post 2","content":"pizza"}]
+```
+
+*Deleting post by **id***
+
+```Python
+
+#deleting post by id
+
+@app.delete("/posts/{id}")
+def delete_post(id: int,response: Response):
+    del_post=find_post(id)
+    
+    if del_post: 
+        title=del_post['title'] #this way we make sure it exsists before accessing title
+        my_posts.remove(del_post)
+        return {"message":f"Post: {title} Deleted succesfully"}
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": f"Post not found ID: {id}"})
+```
+- Function find  post **by id (field)**:
+
+```Python
+def find_post(id):
+    for i in my_posts:  # Iterates over dictionaries and returns the matching dictionary
+        if i['id'] == id:
+            return i  # Returns the matching dictionary if the condition is true
+    print(id)
+    return None  # In case no matching id is found
+
+```
+
+*Deleting post by **Index***
+
+
+```Python
+
+#deleting post by index
+
+app.delete("/posts/{id}")
+def delete_post(id: int, response : Response):
+    index,post=find_index(id)
+    if index:
+        title=post['title']
+        my_posts.pop(index)
+        return {"info": f"Post: {title} , Succesfully deleted"}
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with {id} not found"} )
+
+
+```
+
+
+- Function find post **by index**:
+
+```Python
+
+def find_index(id):
+    for i,p in enumerate(my_posts):#i is index
+        if p['id']==id:
+            return i,p #returning the index and the array
+    return None , None
+
+```
+
+
