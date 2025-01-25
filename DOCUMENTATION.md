@@ -167,3 +167,4 @@ def get_post(id: int,response: Response):#This generates an instance of Response
 ```
 **Adding it at decorator**
 ``@app.post("/posts", status_code=status.HTTP_201_CREATED)`` 
+

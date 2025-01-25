@@ -69,3 +69,15 @@ def get_post(id: int,response: Response):#performing validation with fast api we
         # response.status_code= status.HTTP_404_NOT_FOUND
         # return {"error": f"Post not found ID: {id}"}  # Returns an error message if no matching post is found
 
+
+#deleting post by id
+@app.delete("/posts/{id}")
+def delete_post(id: int,response: Response):
+    del_post=find_post(id)
+    
+    if del_post: 
+        title=del_post['title'] #this way we make sure it exsists before accessing title
+        my_posts.remove(del_post)
+        return {"message":f"Post: {title} Deleted succesfully"}
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": f"Post not found ID: {id}"})
