@@ -101,8 +101,32 @@ def delete_post(id: int, response : Response):
     if post:
         title=post['title']
         my_posts.pop(index)
-        return {"info": f"Post: {title} , Succesfully deleted"}
+        raise HTTPException(status_code=status.HTTP_200_OK,detail={"info": f"Post: {title} , Succesfully deleted"})
+        #return {"info": f"Post: {title} , Succesfully deleted"}
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with {id} not found"} )
+    
+# @app.put("/posts/{id}")
+# def update_post(id: int, response: Response, entry: Post): #Adding the Pydantic schema/class
+#     post=find_post(id)
+#     entry_dict=entry.model_dump() # imporatnt converting into a dictionary
+#     if post:
+#         post.update(entry_dict)# updating the post found above with the given id
+#         raise HTTPException(status_code=status.HTTP_200_OK, detail={"info": f"Post: {id} , Succesfully updated"})
+#     else:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with {id} not found"})
+
+@app.put("/posts/{id}")
+def update_post(id: int, entry: Post):
+    index,post=find_index(id)
+    entry_dict=entry.model_dump() # important converting into a dictionary
+    if post:
+        my_posts[index].update(entry_dict)# update the dictionary(post) based on the [index] that matches
+        raise HTTPException(status_code=status.HTTP_200_OK, detail={"info": f"Post: {id} , Succesfully updated"})
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with ID: {id} not found"})
+
+
+
 
 

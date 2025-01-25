@@ -166,6 +166,7 @@ def get_post(id: int,response: Response):#This generates an instance of Response
 
 ```
 **Adding it at decorator**
+- useful for default operations
 ``@app.post("/posts", status_code=status.HTTP_201_CREATED)`` 
 
 # 6 Delete post old/ new find post fucntion
@@ -240,3 +241,38 @@ def find_index(id):
 ```
 
 
+# 7 Updating posts 
+
+- Same as above, 2 examples one using the **ID** and the othe using the **index ,ID**
+
+- Using the **ID**
+
+```Python
+
+@app.put("/posts/{id}")
+def update_post(id: int, response: Response, entry: Post): #Adding the Pydantic schema
+    post=find_post(id)
+    entry_dict=entry.model_dump()
+    if post:
+        post.update(entry_dict)# updating the post found above with the given id
+        raise HTTPException(status_code=status.HTTP_200_OK, detail={"info": f"Post: {id} , Succesfully updated"})
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with {id} not found"})
+
+
+```
+
+- Using the **index** and the **ID**
+
+```Python
+@app.put("/posts/{id}")
+def update_post(id: int, entry: Post):
+    index,post=find_index(id)
+    entry_dict=entry.model_dump() # important converting into a dictionary
+    if post:
+        my_posts[index].update(entry_dict)# update the dictionary(post) based on the [index] that matches
+        raise HTTPException(status_code=status.HTTP_200_OK, detail={"info": f"Post: {id} , Succesfully updated"})
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with ID: {id} not found"})
+
+```
