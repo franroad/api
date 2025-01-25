@@ -134,7 +134,7 @@ def create_posts(new_post: Post): #function expects new_post param. compliance w
     return {"message_from_server": f"New post added: {post_dict}. Title: {title}"}
 ```
 
-## 5 Returning a personalizaed status with and without HTTPException
+## 5 Returning a personalizaed Http status with and without HTTPException
 
  
 ```python
@@ -165,3 +165,5 @@ def get_post(id: int,response: Response):#This generates an instance of Response
   # Returns an error message if no matching post is found
 
 ```
+**Adding it at decorator**
+``@app.post("/posts", status_code=status.HTTP_201_CREATED)`` 

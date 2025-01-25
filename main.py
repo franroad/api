@@ -36,7 +36,7 @@ def get_posts():
 
 #creating a post
 
-@app.post("/posts") #adding the post to a dict and to the my_post array of dict
+@app.post("/posts", status_code=status.HTTP_201_CREATED) #adding the post to a dict and to the my_post array of dict
 def create_posts(new_post: Post): #function expects new_post param. compliance with pydantic Post class
     post_dict=new_post.model_dump()# We create a dict witht the info we are gonna get
     post_dict['id']=randrange(0, 100000)#from that info the id is gonna be rand adding to the dictionary
