@@ -1,4 +1,6 @@
 
+# 1 Coding CRUD
+
 ```python
  from fastapi import FastAPI #import the library
  from fastapi.params import Body
@@ -21,7 +23,7 @@
 
 ```
 
-# Using Pydantic
+## 1.2 Using Pydantic
 
 ```python
 from typing import Optional
@@ -58,7 +60,8 @@ def create_posts(new_post: Post): #We are refenrcing the Post class that validat
 ```
 
 
-## 1 Base,  creating a global variable and retrieving the info stored in the variable
+## 1.3 Creating a global variable and retrieving the info stored in the variable (GET)
+
 - At this moment the variable will act as DDBB
 ```python
 from typing import Optional
@@ -92,7 +95,7 @@ def create_posts(new_post: Post): #We are refenrcing the Post class that validat
 
 #title str, content str, category
 ```
-## 3 Getting post by id
+## 1.4 Getting post by id (GET)
 
 ```python
 
@@ -119,7 +122,7 @@ def get_post(id: int):#performing validation with fast api we are saying I want 
         return {"error": f"Post not found. ID: {id}"}  # Returns an error message if no matching post is found
 
 ```
-## 4 Creating/adding a post with random id
+## 1.5 Creating/adding a post with random id (POST)
 
 ```python
 my_posts= [{"id":1,"title": "this is the post 1","content":"content of post"},
@@ -134,7 +137,7 @@ def create_posts(new_post: Post): #function expects new_post param. compliance w
     return {"message_from_server": f"New post added: {post_dict}. Title: {title}"}
 ```
 
-## 5 Returning a personalizaed Http status with and without HTTPException
+## 1.6 Returning a personalizaed Http status with and without HTTPException (GET)
 
  
 ```python
@@ -169,7 +172,7 @@ def get_post(id: int,response: Response):#This generates an instance of Response
 - useful for default operations
 ``@app.post("/posts", status_code=status.HTTP_201_CREATED)`` 
 
-# 6 Delete post old/ new find post fucntion
+## 1.7 Delete post old/ new find post fucntion (DELETE)
 
 - Variable
 
@@ -241,7 +244,7 @@ def find_index(id):
 ```
 
 
-# 7 Updating posts 
+## 1.8 Updating posts (PUT) 
 
 - Same as above, 2 examples one using the **ID** and the othe using the **index ,ID**
 
@@ -297,4 +300,6 @@ def find_index(id):
     return None , None
 
 ```
+
+# 2 Data Base implementation
 

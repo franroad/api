@@ -47,3 +47,10 @@ When you create an API , you would normally add documentation, hence the uers kn
  Generates the documentation by default
 
  [docs](http://localhost:8000/docs)
+
+
+ # Database
+
+ - Netx Step is to store the data in Database not in avariable until now.
+
+ 
