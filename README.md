@@ -5,7 +5,7 @@
 3. ``source venv1/bin/activate`` // deactivaste // venv1/Scripts/Activate.ps1
     - pip install fastapi[all]// pip install 'fastapi[all]'
 4. Instalar FastApi
-5. levantar el server ``fastapi dev main.py``
+5. levantar el server ``fastapi dev app/main.py``
 
 # POSTMAN
 Used in test section for testing purposes but there are no schema.
@@ -39,3 +39,11 @@ Index: 0, ID: 1, Title: Post 1, Content: Content of post 1
 Index: 1, ID: 2, Title: Post 2, Content: Content of post 2
 Index: 2, ID: 3, Title: Post 3, Content: Content of post 3
 ```
+
+# Documentation
+When you create an API , you would normally add documentation, hence the uers know how to use it.
+
+**FastApi**
+ Generates the documentation by default
+
+ [docs](http://localhost:8000/docs)

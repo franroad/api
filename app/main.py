@@ -82,6 +82,7 @@ def get_post(id: int,response: Response):#performing validation with fast api we
 
 
 #deleting post by id 
+
 # @app.delete("/posts/{id}")
 # def delete_post(id: int,response: Response):
 #     del_post=find_post(id)
@@ -96,7 +97,7 @@ def get_post(id: int,response: Response):#performing validation with fast api we
 #deleting post by index
 
 @app.delete("/posts/{id}")
-def delete_post(id: int, response : Response):
+def delete_post(id: int):
     index, post=find_index(id)
     if post:
         title=post['title']
@@ -104,7 +105,9 @@ def delete_post(id: int, response : Response):
         raise HTTPException(status_code=status.HTTP_200_OK,detail={"info": f"Post: {title} , Succesfully deleted"})
         #return {"info": f"Post: {title} , Succesfully deleted"}
     else:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with {id} not found"} )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with ID: {id} not found"} )
+    
+#Updating post
     
 # @app.put("/posts/{id}")
 # def update_post(id: int, response: Response, entry: Post): #Adding the Pydantic schema/class
@@ -119,7 +122,7 @@ def delete_post(id: int, response : Response):
 @app.put("/posts/{id}")
 def update_post(id: int, entry: Post):
     index,post=find_index(id)
-    entry_dict=entry.model_dump() # important converting into a dictionary
+    entry_dict=entry.model_dump() # important converting into a dictionary to fit our 
     if post:
         my_posts[index].update(entry_dict)# update the dictionary(post) based on the [index] that matches
         raise HTTPException(status_code=status.HTTP_200_OK, detail={"info": f"Post: {id} , Succesfully updated"})

@@ -261,6 +261,17 @@ def update_post(id: int, response: Response, entry: Post): #Adding the Pydantic 
 
 
 ```
+- Function find  post **by id (field)**:
+
+```Python
+def find_post(id):
+    for i in my_posts:  # Iterates over dictionaries and returns the matching dictionary
+        if i['id'] == id:
+            return i  # Returns the matching dictionary if the condition is true
+    print(id)
+    return None  # In case no matching id is found
+
+```
 
 - Using the **index** and the **ID**
 
@@ -276,3 +287,14 @@ def update_post(id: int, entry: Post):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with ID: {id} not found"})
 
 ```
+- *find_index()* function
+```Python
+
+def find_index(id):
+    for i,p in enumerate(my_posts):#i is index
+        if p['id']==id:
+            return i,p #returning the index and the array
+    return None , None
+
+```
+
