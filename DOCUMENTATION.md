@@ -25,6 +25,8 @@
 
 ## 1.2 Using Pydantic
 
+- Pysantic allows to define a schema for data validation, additionally, performs error handling
+
 ```python
 from typing import Optional
 from fastapi import FastAPI #import the library
