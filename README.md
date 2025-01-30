@@ -53,4 +53,31 @@ When you create an API , you would normally add documentation, hence the uers kn
 
  - Netx Step is to store the data in Database not in avariable until now.
 
- 
+  ## 1.1 Installing Postgres
+
+  **Different components will be installed**
+  - PosgreSQL server [The ddbb itself]
+  - PgAdmin 4 [GUI]
+  - Command line tool 
+
+- Insatalling psql
+``brew install libpq``
+
+``brew link --force libpq``
+
+1.  Start postgre service ``brew services start postgresql@15``
+2.  Start postgre terminal``psql postgres``
+
+3. Create new user and data base
+```SQL
+CREATE USER postgres SUPERUSER;
+
+CREATE USER your_user WITH PASSWORD 'your_password';
+CREATE DATABASE your_database;
+GRANT ALL PRIVILEGES ON DATABASE your_database TO your_user;
+
+```
+4. Install PgAdmin4
+``brew install pgadmin4``
+
+
