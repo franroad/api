@@ -58,7 +58,7 @@ When you create an API , you would normally add documentation, hence the uers kn
   **Different components will be installed**
   - PosgreSQL server [The ddbb itself]
   - PgAdmin 4 [GUI]
-  - Command line tool 
+  - Command line tool (psql)
 
 - Insatalling psql
 ``brew install libpq``
@@ -79,5 +79,9 @@ GRANT ALL PRIVILEGES ON DATABASE your_database TO your_user;
 ```
 4. Install PgAdmin4
 ``brew install pgadmin4``
+
+5. start psql with a given user in a given ddbb
+
+``psql -U <user> -d <database>``
 
 
