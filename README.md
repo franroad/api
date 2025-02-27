@@ -84,4 +84,41 @@ GRANT ALL PRIVILEGES ON DATABASE your_database TO your_user;
 
 ``psql -U <user> -d <database>``
 
+# WORKING WITH db
 
+## PGadmin GUI
+ - UNDER DATABASE --> SCHEMAS --> TABLES is where we are gonnna define our TABLES
+
+
+ **QUERIES EXAMPLES**
+
+*selecting a column with an alias*
+ ```SQL
+select id AS product_id , is_sale as on_sale FROM products;
+ ```
+
+*select with filter where* (<> MEANS NOT )
+```SQL
+SELECT id, name FROM products WHERE id=3;
+
+SELECT id, name FROM products WHERE name='TV';
+
+SELECT * FROM products WHERE price<=80;
+
+SELECT * FROM products WHERE price<>80;
+
+SELECT * FROM products where inventory >0 AND price >20
+ ```
+ *select with in operator*
+
+```SQL
+-- Select the employee ID, employee name, and department columns
+SELECT employee_id, employee_name, department
+FROM employees
+-- Filter the results to include only employees whose department is 'Sales' and 'HR'
+WHERE department IN ('Sales', 'HR');
+
+select * from products where id in (1,2,3);
+ ```
+ 
+ **
