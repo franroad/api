@@ -121,4 +121,42 @@ WHERE department IN ('Sales', 'HR');
 select * from products where id in (1,2,3);
  ```
  
- **
+ 
+*LIKE OPERATOR*
+
+```SQL
+-- Select all from table products where the name starts with tv
+SELECT * FROM products WHERE name LIKE 'TV%';
+
+-- select names that does not have 'en' in the middle
+
+SELECT * FROM products WHERE name NOT LIKE '%en%';
+ ```
+ 
+ 
+
+### inserting values
+
+```SQL
+-- inserting the required vaklues, the other are optionals
+insert into products (name, price, inventory) VALUES ('tortilla',4,1000);
+
+--returning the created items
+
+insert into products (name, price, inventory) VALUES ('tortilla',4,1000) returning *;
+
+
+ ```
+
+
+```SQL
+-- inserting the required vaklues, the other are optionals
+UPDATE products name = 'flour',price 0 40 WHERE id=25 RETURNING *;
+
+-
+
+
+ ```
+
+ # Creating DB for PYTHON/ API
+ 
