@@ -8,6 +8,8 @@ from fastapi import FastAPI, Response, status, HTTPException #import the library
 from fastapi.params import Body
 from pydantic import BaseModel
 from random import randrange #importing the random for generating th post id
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 app=FastAPI() #create instance of fastapi
 
@@ -15,7 +17,14 @@ class Post (BaseModel): # here we use pydantic for define the schema
     title: str
     content: str
     published: bool = True # this is an optional/odefault to true
-    rating: Optional[int]= None #Optional filed with no default value , type integer
+    
+try:
+    conn = psycopg2.connect(host='localhost',database='api',user='api',password='1231', cursor_factory=RealDictCursor)
+    cursor=conn.cursor()
+    print("Succesful connection to DB") 
+except Exception as error:
+    print("Connection to DB Failed")
+    print("Error:", error)
     
 my_posts= [{"id":1,"title": "this is the post 1","content":"content of post"},
            {"id":2,"title": "this is the post 2","content":"pizza"}] #creating a global variable for storing the posts in memory (not using ddbb) its an array of dictionaries

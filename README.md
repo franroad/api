@@ -159,4 +159,20 @@ UPDATE products name = 'flour',price 0 40 WHERE id=25 RETURNING *;
  ```
 
  # Creating DB for PYTHON/ API
- 
+
+ 1. Creating the table posts in the public schema:
+
+ ```SQL
+ CREATE TABLE public.post (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    content VARCHAR(200) NOT NULL,
+    published boolean NOT NULL DEFAULT  TRUE,
+    created_at TIMESTAMP  WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ ```
+
+ 2. Connecting to an existing db USING PYTHON
+Install package: ``pip install psycopg2-binary ``
