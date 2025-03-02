@@ -158,7 +158,7 @@ UPDATE products name = 'flour',price 0 40 WHERE id=25 RETURNING *;
 
  ```
 
- # Creating DB for PYTHON/ API
+ # Creating DB for PYTHON/ API / psycopg2 (v1.1.0)
 
  1. Creating the table posts in the public schema:
 
@@ -176,3 +176,9 @@ UPDATE products name = 'flour',price 0 40 WHERE id=25 RETURNING *;
 
  2. Connecting to an existing db USING PYTHON
 Install package: ``pip install psycopg2-binary ``
+
+
+# USING (ORM) Object relational mapper (v1.1.1) 
+
+- This will allow us to perform the data base operations in ``Python`` no more SQL strings.
+- ORM layer of abstraction that sits between the DB and the app
