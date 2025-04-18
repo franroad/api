@@ -176,6 +176,64 @@ UPDATE products name = 'flour',price 0 40 WHERE id=25 RETURNING *;
 
  2. Connecting to an existing db USING PYTHON
 Install package: ``pip install psycopg2-binary ``
+ usage example:
+
+```Python
+    #Connecting to the DB And QUERY EXAMPLE
+
+
+
+from typing import Optional
+from fastapi import FastAPI, Response, status, HTTPException #import the library
+from fastapi.params import Body
+from pydantic import BaseModel
+from random import randrange #importing the random for generating th post id
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import time
+
+app=FastAPI() #create instance of fastapi
+
+class Post (BaseModel): # here we use pydantic for define the schema
+    title: str
+    content: str
+    published: bool = True # this is an optional/odefault to true
+
+#while True:
+
+for i in range(5):
+
+    try:
+        conn = psycopg2.connect(host='localhost',database='api',user='api',password='1231', cursor_factory=RealDictCursor)
+        cursor=conn.cursor()
+        print("Succesful connection to DB") 
+        break
+    except Exception as error: #Exception, Python class to catch the errors.
+        print("Connection to DB Failed")
+        print("Error:", error)
+        time.sleep(3)
+else:
+    print("All attempts to connect to the DB have failed")
+
+@app.get("/posts") #to retrieve all posts
+def get_posts():
+    cursor.execute("""SELECT * FROM posts""")
+    posts=cursor.fetchall()
+    return{"data": posts} #passing the variable
+
+#we still using the pydantic class created above (Post)
+@app.post("/posts", status_code=status.HTTP_201_CREATED) #adding the post to a dict and to the my_post array of dict
+def create_posts(new_post: Post): #function expects new_post param. compliance with pydantic Post class
+    cursor.execute("""INSERT INTO posts (title, content, published) 
+                   VALUES (%s, %s, %s) RETURNING *
+                   """,(new_post.title,new_post.content,new_post.published))
+    posts=cursor.fetchone()
+    conn.commit()# for saving the changes in the DDBB
+    return {"message_from_server": f"New post added: {posts}. Title: {posts['title']}"}
+
+
+
+```
 
 
 # USING (ORM) Object relational mapper (v1.1.1) 
