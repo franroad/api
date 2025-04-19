@@ -240,3 +240,11 @@ def create_posts(new_post: Post): #function expects new_post param. compliance w
 
 - This will allow us to perform the data base operations in ``Python`` no more SQL strings.
 - ORM layer of abstraction that sits between the DB and the app
+
+## Installation
+
+- Installing SQL Alchemy: ``pip install sqlalchemy==1.4``
+- It needs a database driver to commuinicate with the ddbb in this case psycopg2 which we have already intalled
+- We generate a newfile ``database.py`` fo handlong the ddbb connection. 
+ 
+ 1. In the ``models.py `` we define a new table for our database
