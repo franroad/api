@@ -28,26 +28,6 @@ class Post (BaseModel): # here we use pydantic for define the schema
     content: str
     published: bool = True # this is an optional/odefault to true
 
-
-#Connecting to the DB 
-
-#while True:
-for i in range(5):
-
-    try:
-        conn = psycopg2.connect(host='localhost',database='api',user='api',password='1231', cursor_factory=RealDictCursor)
-        cursor=conn.cursor()
-        print("Succesful connection to DB") 
-        break
-    except Exception as error: #Exception, Python class to catch the errors.
-        print("Connection to DB Failed")
-        print("Error:", error)
-        time.sleep(3)
-else:
-    print("All attempts to connect to the DB have failed")
-    
-
-
 @app.get("/")#the route where to find the stuff /fran would be: http://127.0.0.1:8000/fran (decorator , endpoint)
 def root(): #root=funtion name (does not matter)
     return {"message": "Hello World"}
@@ -55,6 +35,7 @@ def root(): #root=funtion name (does not matter)
 @app.get("/sqlalchemy")
 def test_posts(db: Session = Depends(get_db)): #thanks to depends on till get_db is not succesful is not going to start
     
+    posts=db.query(models.PostORM).all()
     
     return {"data": posts}
 
@@ -107,9 +88,7 @@ def get_post(id: int, db: Session = Depends(get_db)):#performing validation with
 
 @app.delete("/posts/{id}")
 def delete_post(id: int, db: Session = Depends(get_db) ):
-    # cursor.execute("""DELETE FROM POSTS WHERE id=%s Returning *""",(str(id)))
-    # post=cursor.fetchone()
-    # conn.commit()
+   
     post = db.query(models.PostORM).filter(models.PostORM.id == id).first()
 
     if post:
@@ -123,13 +102,19 @@ def delete_post(id: int, db: Session = Depends(get_db) ):
     
 # GETTING THE ID AND PASSING THE VALUES TO BE UPDATED
 @app.put("/posts/{id}")
-def update_post(id: int, entry: Post):
-    cursor.execute("""UPDATE posts SET title =%s, content=%s, published=%s WHERE id=%s RETURNING *""",(entry.title,entry.content,entry.published,(str(id))))
-    post=cursor.fetchone()
-    conn.commit()
+def update_post(id: int, entry: Post,db: Session = Depends(get_db)): #Post is the pydacntic class
+    
+    post_query=db.query(models.PostORM).filter(models.PostORM.id == id)#query object, can call an update (bulk)
+    post=post_query.first()# used to check the existence (model instance cannot call an update)
+    
     if post:#IF post is not none raise 200 else 404
+        post_query.update(entry.dict(),synchronize_session=False)
         
-        raise HTTPException(status_code=status.HTTP_200_OK, detail={"info": f"Post: {id},{post} Succesfully updated"})
+        db.commit()
+        #db.refresh(post)
+        return {"Data": {post_query.first()}}
+        # raise HTTPException(status_code=status.HTTP_200_OK, detail={"info": f"Post: {id},{post} Succesfully updated"})
+        
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with ID: {id} not found"})
 
