@@ -1,3 +1,12 @@
+- [1 Coding CRUD](#1-coding-crud)
+  - [1.2 Using Pydantic](#12-using-pydantic)
+  - [1.3 Creating a global variable and retrieving the info stored in the variable (GET)](#13-creating-a-global-variable-and-retrieving-the-info-stored-in-the-variable-get)
+  - [1.4 Getting post by id (GET)](#14-getting-post-by-id-get)
+  - [1.5 Creating/adding a post with random id (POST)](#15-creatingadding-a-post-with-random-id-post)
+  - [1.6 Returning a personalizaed Http status with and without HTTPException (GET)](#16-returning-a-personalizaed-http-status-with-and-without-httpexception-get)
+  - [1.7 Delete post old/ new find post fucntion (DELETE)](#17-delete-post-old-new-find-post-fucntion-delete)
+  - [1.8 Updating posts (PUT)](#18-updating-posts-put)
+- [2 Data Base implementation](#2-data-base-implementation)
 
 # 1 Coding CRUD
 

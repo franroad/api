@@ -1,3 +1,17 @@
+- [API PROJECT](#api-project)
+- [POSTMAN](#postman)
+- [Pydantic](#pydantic)
+- [NOTES](#notes)
+- [Documentation](#documentation)
+- [Database](#database)
+  - [1.1 Installing Postgres](#11-installing-postgres)
+- [WORKING WITH db](#working-with-db)
+  - [PGadmin GUI](#pgadmin-gui)
+    - [inserting values](#inserting-values)
+- [2. Creating DB for PYTHON/ API / psycopg2 (v1.1.0)](#2-creating-db-for-python-api--psycopg2-v110)
+- [3. USING (ORM) Object relational mapper (v1.1.1)](#3-using-orm-object-relational-mapper-v111)
+  - [Installation](#installation)
+
 # API PROJECT
 
 1. Create the virtual environment, ``python3 -m venv venv1``
@@ -158,7 +172,7 @@ UPDATE products name = 'flour',price 0 40 WHERE id=25 RETURNING *;
 
  ```
 
- # Creating DB for PYTHON/ API / psycopg2 (v1.1.0)
+ # 2. Creating DB for PYTHON/ API / psycopg2 (v1.1.0)
 
  1. Creating the table posts in the public schema:
 
@@ -236,10 +250,10 @@ def create_posts(new_post: Post): #function expects new_post param. compliance w
 ```
 
 
-# USING (ORM) Object relational mapper (v1.1.1) 
+# 3. USING (ORM) Object relational mapper (v1.1.1) 
 
 - This will allow us to perform the data base operations in ``Python`` no more SQL strings.
-- ORM layer of abstraction that sits between the DB and the app
+- ORM layer of abstraction that sits between the DB and the app leverages psycopgp2 to manage the connection to the ddbb
 
 ## Installation
 
