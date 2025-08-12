@@ -15,6 +15,7 @@ import time
 from . import models
 from .database import engine , get_db
 from  sqlalchemy.orm import Session
+from . import schemas
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -23,10 +24,7 @@ app=FastAPI() #create instance of fastapi
 
 
 
-class Post (BaseModel): # here we use pydantic for define the schema
-    title: str
-    content: str
-    published: bool = True # this is an optional/odefault to true
+
 
 @app.get("/")#the route where to find the stuff /fran would be: http://127.0.0.1:8000/fran (decorator , endpoint)
 def root(): #root=funtion name (does not matter)
@@ -55,7 +53,7 @@ def get_posts(db: Session = Depends(get_db)):
 
 #we still using the pydantic class created above (Post)
 @app.post("/posts", status_code=status.HTTP_201_CREATED) #adding the post to a dict and to the my_post array of dict
-def create_posts(new_post: Post, db: Session = Depends(get_db)): #function expects new_post param. compliance with pydantic Post class
+def create_posts(new_post: schemas.Post, db: Session = Depends(get_db)): #function expects new_post param. compliance with pydantic Post class
 
 
     #post = models.PostORM(title=new_post.title, content=new_post.content, published=new_post.published)
@@ -102,7 +100,7 @@ def delete_post(id: int, db: Session = Depends(get_db) ):
     
 # GETTING THE ID AND PASSING THE VALUES TO BE UPDATED
 @app.put("/posts/{id}")
-def update_post(id: int, entry: Post,db: Session = Depends(get_db)): #Post is the pydacntic class
+def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(get_db)): #Post is the pydacntic class
     
     post_query=db.query(models.PostORM).filter(models.PostORM.id == id)#query object, can call an update (bulk)
     post=post_query.first()# used to check the existence (model instance cannot call an update)

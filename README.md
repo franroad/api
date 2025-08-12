@@ -254,6 +254,14 @@ def create_posts(new_post: Post): #function expects new_post param. compliance w
 
 - This will allow us to perform the data base operations in ``Python`` no more SQL strings.
 - ORM layer of abstraction that sits between the DB and the app leverages psycopgp2 to manage the connection to the ddbb
+- Note that the user needs permission in the schema public : 
+
+-- Allow the api role all the privileges in the public schema
+``GRANT ALL PRIVILEGES ON SCHEMA public TO api;``
+
+
+
+
 
 ## Installation
 
