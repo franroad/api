@@ -3,7 +3,7 @@
 #using Pydantic
 ######
 
-from typing import Optional
+from typing import Optional, List
 from fastapi import FastAPI, Response, status, HTTPException, Depends #import the library
 from fastapi.params import Body
 from pydantic import BaseModel
@@ -38,7 +38,7 @@ def test_posts(db: Session = Depends(get_db)): #thanks to depends on till get_db
     return {"data": posts}
 
 
-@app.get("/posts",response_model=schemas.PostResponse) #to retrieve all posts
+@app.get("/posts",response_model=List[schemas.PostResponse]) #to retrieve all posts
 def get_posts(db: Session = Depends(get_db)):
     posts=db.query(models.PostORM).all() #models=tables
     

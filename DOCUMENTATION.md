@@ -369,3 +369,26 @@ We have added the ``response_code`` decorator so , FastApi will Update the respo
 ```
 #### Multipole posts
 This aproach works well when the output is only one post but when returning multiple poosts we need to modify more stuff
+
+This happens because we are returning a list of posts and is trying to fit it in one individual post
+
+```Python
+@app.get("/posts",response_model=schemas.PostResponse) # 2. Trying to fit it in one unique posts (not list)
+def get_posts(db: Session = Depends(get_db)):
+    posts=db.query(models.PostORM).all() # 1.Here we are returning a list of posts
+    
+    return posts #removing the dict and retunr the stuff  no data keyword
+   
+```
+
+**Updated Code**
+```Python
+from typing import List
+
+@app.get("/posts",response_model=List[schemas.PostResponse]) # 2. Now is handling a  List
+def get_posts(db: Session = Depends(get_db)):
+    posts=db.query(models.PostORM).all() # 1.Here we are returning a list of posts
+    
+    return posts #removing the dict and retunr the stuff  no data keyword
+   
+```

@@ -16,9 +16,9 @@ class PostResponse (BaseModel): #This model defines the response that the user w
     id: int
     created_at: datetime
     
-    # @field_serializer("created_at")
-    # def format_created_at(self, dt: datetime, _) -> str:
-    #     return dt.strftime("%Y-%m-%d %H:%M")
+    @field_serializer("created_at")
+    def format_created_at(self, dt: datetime, _) -> str:
+        return dt.strftime("%Y-%m-%d %H:%M")
     
    
 
