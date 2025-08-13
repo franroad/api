@@ -38,11 +38,11 @@ def test_posts(db: Session = Depends(get_db)): #thanks to depends on till get_db
     return {"data": posts}
 
 
-@app.get("/posts") #to retrieve all posts
+@app.get("/posts",response_model=schemas.PostResponse) #to retrieve all posts
 def get_posts(db: Session = Depends(get_db)):
     posts=db.query(models.PostORM).all() #models=tables
-    #print(posts)
-    return{"data": posts} #passing the variable
+    
+    return posts #removing the dict and retunr the stuff  no data keyword
 
 
 
@@ -52,7 +52,7 @@ def get_posts(db: Session = Depends(get_db)):
 #Title: {post['title']}
 
 #we still using the pydantic class created above (Post)
-@app.post("/posts", status_code=status.HTTP_201_CREATED) #adding the post to a dict and to the my_post array of dict
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
 def create_posts(new_post: schemas.Post, db: Session = Depends(get_db)): #function expects new_post param. compliance with pydantic Post class
 
 
@@ -63,22 +63,22 @@ def create_posts(new_post: schemas.Post, db: Session = Depends(get_db)): #functi
     db.refresh(post)
 
     #return {"message_from_server": f"New post added!  Title: {post.title}"}
-    return {"Data": {post}}
+    return post
 #   
          
         
  #retrieving post by id           
        
-@app.get("/posts/{id}")  # Get post per id (decorator/path parameter)
+@app.get("/posts/{id}",response_model=schemas.PostResponse)  # Get post per id (decorator/path parameter)
 def get_post(id: int, db: Session = Depends(get_db)):#performing validation with fast api we are saying I want an integer as input.
     post = db.query(models.PostORM).filter(models.PostORM.id == id).first() #first entrance that matches
-    print(post)
+    #print(post)
     # cursor.execute("""SELECT * FROM posts WHERE id=%s""",(str(id)))#then we convert it to string for the query
     # post=cursor.fetchone()
 
 
     if post: #in python not empty values are considered as true same as: if post != {} (si no esta vacio... damelo else error)
-        return {"post_info": {post}}  # Returns the entire post if found
+        return post  # Returns the entire post if found
     else:#if not found
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": f"Post with ID: {id} not found "})
         
@@ -110,7 +110,7 @@ def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(get_db)
         
         db.commit()
         #db.refresh(post)
-        return {"Data": {post_query.first()}}
+        return  {post_query.first()}
         # raise HTTPException(status_code=status.HTTP_200_OK, detail={"info": f"Post: {id},{post} Succesfully updated"})
         
     else:

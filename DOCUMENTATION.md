@@ -10,6 +10,7 @@
   - [Response pydantic v1.1.3](#response-pydantic-v113)
     - [We need to define the schema and serializer:](#we-need-to-define-the-schema-and-serializer)
     - [And update the code](#and-update-the-code)
+      - [Multipole posts](#multipole-posts)
 
 # 1 Coding CRUD
 
@@ -366,3 +367,5 @@ We have added the ``response_code`` decorator so , FastApi will Update the respo
     return post
  
 ```
+#### Multipole posts
+This aproach works well when the output is only one post but when returning multiple poosts we need to modify more stuff
