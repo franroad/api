@@ -119,4 +119,15 @@ def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(get_db)
 
 
 
+@app.post("/useradd", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse) 
+def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
+    
+    
+    user=models.Users(**new_user.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    #return {"message_from_server": f"New post added!  Title: {post.title}"}
+    return user
 

@@ -13,6 +13,8 @@
       - [Multipole posts](#multipole-posts)
 - [3 User mangement and authentication v1.1.4](#3-user-mangement-and-authentication-v114)
   - [Creating user table](#creating-user-table)
+  - [Creating api-endpoint/function add user](#creating-api-endpointfunction-add-user)
+  - [Creating the pydanti schema for request and response](#creating-the-pydanti-schema-for-request-and-response)
 
 # 1 Coding CRUD
 
@@ -407,3 +409,19 @@ class Users(Base):
     password= Column(String, nullable=False)
     created_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'))
 ````
+## Creating api-endpoint/function add user
+```python
+@app.post("/useradd", status_code=status.HTTP_201_CREATED) 
+def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
+    
+    
+    user=models.Users(**new_user.dict())# we are meaking reference to the model name not the table name
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    #return {"message_from_server": f"New post added!  Title: {post.title}"}
+    return user
+
+```
+## Creating the pydanti schema for request and response
