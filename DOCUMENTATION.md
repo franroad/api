@@ -7,6 +7,9 @@
   - [1.7 Delete post old/ new find post fucntion (DELETE)](#17-delete-post-old-new-find-post-fucntion-delete)
   - [1.8 Updating posts (PUT)](#18-updating-posts-put)
 - [2 Data Base implementation](#2-data-base-implementation)
+  - [Response pydantic v1.1.3](#response-pydantic-v113)
+    - [We need to define the schema and serializer:](#we-need-to-define-the-schema-and-serializer)
+    - [And update the code](#and-update-the-code)
 
 # 1 Coding CRUD
 
@@ -314,3 +317,52 @@ def find_index(id):
 
 # 2 Data Base implementation
 
+## Response pydantic v1.1.3
+As we have Pydantic modelt to define the requst there are also pydantic models to difne the response
+
+Currently base in our Pydantic schemas the request only is processed if acoomplish what is defines (tittle, content.. boleean.)
+
+But the response is returned as it follows no control :
+
+
+```Python
+{
+    "title": "test pydantic",
+    "content": "third post from dell",
+    "created_at": "2025-08-12T19:45:27.258204+02:00",
+    "published": true,
+    "id": 4
+}
+```
+### We need to define the schema and serializer:
+Additionally we have used a ``serializer`` to modify the datetime format for the **created_at** value before returning it to the user.
+```Python
+    class PostResponse (BaseModel): #This model defines the response that the user will get
+    title: str
+    content: str
+    id: int
+    created_at: datetime
+    @field_serializer("created_at")
+    def format_created_at(self, dt: datetime, _) -> str:
+        return dt.strftime("%Y-%m-%d %H:%M")
+
+ 
+```
+### And update the code
+We have added the ``response_code`` decorator so , FastApi will Update the response based in the Pydantic Shcema before fowarding it to the user.
+
+```Python
+   @app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
+   def create_posts(new_post: schemas.Post, db: Session = Depends(get_db)): #function expects new_post param. compliance with pydantic Post class
+
+
+    #post = models.PostORM(title=new_post.title, content=new_post.content, published=new_post.published)
+    post=models.PostORM(**new_post.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
+    db.add(post)
+    db.commit()
+    db.refresh(post)
+
+    #return {"message_from_server": f"New post added!  Title: {post.title}"}
+    return post
+ 
+```
