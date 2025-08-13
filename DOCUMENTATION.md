@@ -11,6 +11,8 @@
     - [We need to define the schema and serializer:](#we-need-to-define-the-schema-and-serializer)
     - [And update the code](#and-update-the-code)
       - [Multipole posts](#multipole-posts)
+- [3 User mangement and authentication v1.1.4](#3-user-mangement-and-authentication-v114)
+  - [Creating user table](#creating-user-table)
 
 # 1 Coding CRUD
 
@@ -392,3 +394,16 @@ def get_posts(db: Session = Depends(get_db)):
     return posts #removing the dict and retunr the stuff  no data keyword
    
 ```
+# 3 User mangement and authentication v1.1.4
+
+
+## Creating user table 
+This table will allow us to save all the user information we create the model
+````python
+class Users(Base):
+    __tablename__="users"
+    id=Column(Integer, primary_key=True, nullable= False)
+    email= Column(String, nullable=False, unique=True)
+    password= Column(String, nullable=False)
+    created_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'))
+````
