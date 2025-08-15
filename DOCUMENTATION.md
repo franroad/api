@@ -14,7 +14,8 @@
 - [3 User mangement and authentication v1.1.4](#3-user-mangement-and-authentication-v114)
   - [Creating user table](#creating-user-table)
   - [Creating api-endpoint/function add user](#creating-api-endpointfunction-add-user)
-  - [Creating the pydanti schema for request and response](#creating-the-pydanti-schema-for-request-and-response)
+  - [Creating the pydantic schema for request and response](#creating-the-pydantic-schema-for-request-and-response)
+  - [Hashing User Password](#hashing-user-password)
 
 # 1 Coding CRUD
 
@@ -411,11 +412,11 @@ class Users(Base):
 ````
 ## Creating api-endpoint/function add user
 ```python
-@app.post("/useradd", status_code=status.HTTP_201_CREATED) 
+@app.post("/useradd", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse) 
 def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
     
     
-    user=models.Users(**new_user.dict())# we are meaking reference to the model name not the table name
+    user=models.Users(**new_user.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -424,4 +425,58 @@ def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
     return user
 
 ```
-## Creating the pydanti schema for request and response
+## Creating the pydantic schema for request and response 
+
+**REQUEST**
+```python
+class Useradd(BaseModel):
+    email:EmailStr
+    password:str
+```
+**RESPONSE**
+In this Schema additionally to the serilaizer for the date time there is one for sending a message in the response.
+
+```python
+class UserResponse (BaseModel):
+    email:str
+    created_at: datetime
+
+    @field_serializer("created_at")
+    def format_created_at(self, dt: datetime, _) -> str:
+        return dt.strftime("%Y-%m-%d %H:%M")
+    
+
+    @computed_field # This is for sending  a message
+    @property
+    def message(self) -> str:
+        # now you can refer to self.email
+        return f"User {self.email!r} created successfully" # !r is for obtaining the mail between quotes
+   
+```
+
+## Hashing User Password
+
+For hashing the passwrod we need *passlib* and the *Bcrypt* algorithm for hashing
+``pip install passlib[bcrypt]``
+
+```python
+from passlib.context import CryptContext
+
+pwd_context=CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+@app.post("/useradd", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse) 
+def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
+
+    #hash the password - new_user.password
+    hashed_password=pwd_context.hash(new_user.password)
+    new_user.password=hashed_password
+
+    user=models.Users(**new_user.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    #return {"message_from_server": f"New post added!  Title: {post.title}"}
+    return user
+
+```

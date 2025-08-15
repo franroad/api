@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_serializer, computed_field
+from pydantic import BaseModel, field_serializer, computed_field, EmailStr
 from datetime import datetime
 
 class Post (BaseModel): # here we use pydantic for define the schema
@@ -7,7 +7,7 @@ class Post (BaseModel): # here we use pydantic for define the schema
     published: bool = True # this is an optional/odefault to true
 
 class Useradd(BaseModel):
-    email:str
+    email:EmailStr
     password:str
 
 

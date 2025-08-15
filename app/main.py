@@ -16,8 +16,9 @@ from . import models
 from .database import engine , get_db
 from  sqlalchemy.orm import Session
 from . import schemas
+from passlib.context import CryptContext
 
-
+pwd_context=CryptContext(schemes=["bcrypt"], deprecated="auto")
 models.Base.metadata.create_all(bind=engine)
 
 app=FastAPI() #create instance of fastapi
@@ -121,8 +122,11 @@ def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(get_db)
 
 @app.post("/useradd", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse) 
 def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
-    
-    
+
+    #hash the password - new_user.password
+    hashed_password=pwd_context.hash(new_user.password)
+    new_user.password=hashed_password
+
     user=models.Users(**new_user.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
     db.add(user)
     db.commit()
