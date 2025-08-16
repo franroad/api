@@ -16,6 +16,7 @@
   - [Creating api-endpoint/function add user](#creating-api-endpointfunction-add-user)
   - [Creating the pydantic schema for request and response](#creating-the-pydantic-schema-for-request-and-response)
   - [Hashing User Password](#hashing-user-password)
+  - [Adding *Utils.py* file function call.](#adding-utilspy-file-function-call)
 
 # 1 Coding CRUD
 
@@ -480,3 +481,7 @@ def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
     return user
 
 ```
+## Adding *Utils.py* file function call.
+In order to heave a more clean **main.py**  we create the **utils.py** file
+We send the password filed from pydantic and it returns the hash that later is added to the ddbb.
+
