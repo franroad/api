@@ -11,12 +11,13 @@
     - [We need to define the schema and serializer:](#we-need-to-define-the-schema-and-serializer)
     - [And update the code](#and-update-the-code)
       - [Multipole posts](#multipole-posts)
-- [3 User mangement and authentication v1.1.4](#3-user-mangement-and-authentication-v114)
+- [3 User  and password hashing v1.1.4](#3-user--and-password-hashing-v114)
   - [Creating user table](#creating-user-table)
   - [Creating api-endpoint/function add user](#creating-api-endpointfunction-add-user)
   - [Creating the pydantic schema for request and response](#creating-the-pydantic-schema-for-request-and-response)
   - [Hashing User Password](#hashing-user-password)
   - [Adding *Utils.py* file function call.](#adding-utilspy-file-function-call)
+- [4 Splitting main.py using routers v1.1.5](#4-splitting-mainpy-using-routers-v115)
 
 # 1 Coding CRUD
 
@@ -398,7 +399,7 @@ def get_posts(db: Session = Depends(get_db)):
     return posts #removing the dict and retunr the stuff  no data keyword
    
 ```
-# 3 User mangement and authentication v1.1.4
+# 3 User  and password hashing v1.1.4
 
 
 ## Creating user table 
@@ -485,3 +486,6 @@ def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
 In order to heave a more clean **main.py**  we create the **utils.py** file
 We send the password filed from pydantic and it returns the hash that later is added to the ddbb.
 
+# 4 Splitting main.py using routers v1.1.5
+
+We are gonna split the **main.py** in two files one for users and the other for posts

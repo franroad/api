@@ -136,11 +136,11 @@ def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
         return user
 
 
-@app.get("/user/{id}",response_model=schemas.UserResponse)
+@app.get("/user/{id}",response_model=schemas.UserResponseGet) #resonse_model makes sure that unwanted field like password is not retrieved and shown
 def get_user (id:int,db: Session = Depends(get_db)):
     user=db.query(models.Users).filter(models.Users.id == id).first()
     if user:
         return user
     else:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=f"User with id: {id} not found")
     
