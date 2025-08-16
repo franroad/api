@@ -12,11 +12,10 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 #for using stuff for the ORM definedo in app folder
-from . import models
 from .database import engine , get_db
 from  sqlalchemy.orm import Session
-from . import schemas
-from .utils import hash_pasword
+from . import schemas,models,utils
+
 models.Base.metadata.create_all(bind=engine)
 
 app=FastAPI() #create instance of fastapi
@@ -116,20 +115,32 @@ def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(get_db)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with ID: {id} not found"})
 
 
-
+###---------USER STUFF---------###
 
 @app.post("/useradd", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse) 
 def create_user(new_user: schemas.Useradd, db: Session = Depends(get_db)):
 
     #hash the password - new_user.password
-    new_user.password=hash_pasword(new_user.password)
-    #new_user.password=hash_pasword()
+    #Updating the value for the password withthe return of the fucniton.
+    new_user.password=utils.hash_pasword(new_user.password) #we are calling and sending the info to the funciton
+    
+    try:
+        user=models.Users(**new_user.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    except:
+        raise HTTPException(status_code=422, detail="User already exists")
+    else:                
+        #return {"message_from_server": f"New post added!  Title: {post.title}"}
+        return user
 
-    user=models.Users(**new_user.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
-    db.add(user)
-    db.commit()
-    db.refresh(user)
 
-    #return {"message_from_server": f"New post added!  Title: {post.title}"}
-    return user
-
+@app.get("/user/{id}",response_model=schemas.UserResponse)
+def get_user (id:int,db: Session = Depends(get_db)):
+    user=db.query(models.Users).filter(models.Users.id == id).first()
+    if user:
+        return user
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+    
