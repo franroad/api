@@ -257,7 +257,8 @@ def create_posts(new_post: Post): #function expects new_post param. compliance w
 - Note that the user needs permission in the schema public : 
 
 -- Allow the api role all the privileges in the public schema
-``GRANT ALL PRIVILEGES ON SCHEMA public TO api;``
+``GRANT ALL PRIVILEGES ON SCHEMA public TO api;`` 
+- This step should be done using the postgres user but connected to the api ddbb
 
 
 
