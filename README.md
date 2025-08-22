@@ -14,6 +14,14 @@
 
 # API PROJECT
 
+**REQUIRED COMPONENTS**
+- SQL ALCHEMY(allows as to use Python instead of SQL queries in the code to communicate with the DDBB)
+- PSYCOPGP2 (acts a as a driver between the DDBB and the ORM )
+- SQL POSTGRES AND PGADMIN (DDBB and DDBB controller)
+- POSTMAN (Allows as to communicate with the api endpoints)
+- PASSLIB (Allows us to cipher the passwords)
+- PYDANTIC (Allows to define shcemas for data validation for request and response)
+
 1. Create the virtual environment, ``python3 -m venv venv1``
 2. view-->command palet --> python select interpreter select the env we have installed
 3. ``source venv1/bin/activate`` // deactivaste // venv1/Scripts/Activate.ps1

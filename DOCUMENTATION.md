@@ -489,3 +489,37 @@ We send the password filed from pydantic and it returns the hash that later is a
 # 4 Splitting main.py using routers v1.1.5
 
 We are gonna split the **main.py** in two files one for users and the other for posts
+
+1. Created a  folder named *routers* that contains 2 files *postst.py* and *users.py* .
+2. These are acting now as independent files so we need to add the imports and the **ROUTER** object
+
+*Posts example*
+
+
+```Python
+from fastapi import FastAPI, Response, status, HTTPException, Depends,APIRouter
+from .. import schemas,models,utils,database
+from  sqlalchemy.orm import Session
+from typing import Optional, List
+
+router= APIRouter()
+
+@router.get("/posts",response_model=List[schemas.PostResponse]) #to retrieve all posts
+def get_posts(db: Session = Depends(database.get_db)):
+    posts=db.query(models.PostORM).all() #models=tables
+    
+    return posts #removing the dict and retunr the stuff  no data keyword
+
+```
+We need to update the *main.py*
+
+```Python
+from . routers import users,posts
+models.Base.metadata.create_all(bind=engine)
+
+app=FastAPI() #create instance of fastapi
+
+app.include_router(posts.router)
+app.include_router(users.router)
+
+```

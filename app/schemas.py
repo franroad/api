@@ -23,7 +23,14 @@ class PostResponse (BaseModel): #This model defines the response that the user w
     @field_serializer("created_at")
     def format_created_at(self, dt: datetime, _) -> str:
         return dt.strftime("%Y-%m-%d %H:%M")
-    
+
+class PostResponseUpdate (PostResponse): #This model defines the response that the user will get
+    pass
+    @computed_field # This is for sending  a message
+    @property
+    def message(self) -> str:
+        # now you can refer to self.email
+        return "Post updated Succesfully"
    
 class UserResponse (BaseModel):
     email:str
