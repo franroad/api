@@ -3,9 +3,12 @@ from .. import schemas,models,utils,database
 from  sqlalchemy.orm import Session
 from typing import Optional, List
 
-router= APIRouter()
+router= APIRouter(
+    prefix="/posts",
+    tags=['posts'] # This is mainly for improveing the readability of http://localhost:8000/docs
+)
 
-@router.get("/posts",response_model=List[schemas.PostResponse]) #to retrieve all posts
+@router.get("/",response_model=List[schemas.PostResponse]) #to retrieve all posts
 def get_posts(db: Session = Depends(database.get_db)):
     posts=db.query(models.PostORM).all() #models=tables
     
@@ -19,7 +22,7 @@ def get_posts(db: Session = Depends(database.get_db)):
 #Title: {post['title']}
 
 #we still using the pydantic class created above (Post)
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
 def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db)): #function expects new_post param. compliance with pydantic Post class
 
 
@@ -36,7 +39,7 @@ def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db))
         
  #retrieving post by id           
        
-@router.get("/posts/{id}",response_model=schemas.PostResponse)  # Get post per id (decorator/path parameter)
+@router.get("/{id}",response_model=schemas.PostResponse)  # Get post per id (decorator/path parameter)
 def get_post(id: int, db: Session = Depends(database.get_db)):#performing validation with fast api we are saying I want an integer as input.
     post = db.query(models.PostORM).filter(models.PostORM.id == id).first() #first entrance that matches
     #print(post)
@@ -51,7 +54,7 @@ def get_post(id: int, db: Session = Depends(database.get_db)):#performing valida
         
 
 
-@router.delete("/posts/{id}")
+@router.delete("/{id}")
 def delete_post(id: int, db: Session = Depends(database.get_db) ):
    
     post = db.query(models.PostORM).filter(models.PostORM.id == id).first()
@@ -66,7 +69,7 @@ def delete_post(id: int, db: Session = Depends(database.get_db) ):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with ID: {id} not found"} )
     
 # GETTING THE ID AND PASSING THE VALUES TO BE UPDATED
-@router.put("/posts/{id}",response_model=schemas.PostResponseUpdate)
+@router.put("/{id}",response_model=schemas.PostResponseUpdate)
 def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(database.get_db)): #Post is the pydacntic class
     
     post_query=db.query(models.PostORM).filter(models.PostORM.id == id)#query object, can call an update (bulk)

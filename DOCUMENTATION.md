@@ -18,6 +18,7 @@
   - [Hashing User Password](#hashing-user-password)
   - [Adding *Utils.py* file function call.](#adding-utilspy-file-function-call)
 - [4 Splitting main.py using routers v1.1.5](#4-splitting-mainpy-using-routers-v115)
+  - [Routing Prefix and tags](#routing-prefix-and-tags)
 
 # 1 Coding CRUD
 
@@ -523,3 +524,12 @@ app.include_router(posts.router)
 app.include_router(users.router)
 
 ```
+## Routing Prefix and tags
+- The idea is to remove the need of copying the same path in each api endpoint such as "/posts/*something...*"
+  ```Python
+    router= APIRouter(
+        prefix="/posts"
+    )
+
+  ```
+  With this modification endpoint : **"/posts"** is converted to **"/"**

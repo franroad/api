@@ -3,10 +3,13 @@ from .. import schemas,models,utils,database
 from  sqlalchemy.orm import Session
 from typing import Optional, List
 
-router=APIRouter()
+router=APIRouter(
+    prefix="/user",
+    tags=['users']
+)
 
 
-@router.post("/useradd", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse) 
+@router.post("/add", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse) 
 def create_user(new_user: schemas.Useradd, db: Session = Depends(database.get_db)):
 
     #hash the password - new_user.password
@@ -25,7 +28,7 @@ def create_user(new_user: schemas.Useradd, db: Session = Depends(database.get_db
         return user
 
 
-@router.get("/user/{id}",response_model=schemas.UserResponseGet) #resonse_model makes sure that unwanted field like password is not retrieved and shown
+@router.get("/{id}",response_model=schemas.UserResponseGet) #resonse_model makes sure that unwanted field like password is not retrieved and shown
 def get_user (id:int,db: Session = Depends(database.get_db)):
     user=db.query(models.Users).filter(models.Users.id == id).first()
     if user:
