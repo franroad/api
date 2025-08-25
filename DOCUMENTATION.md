@@ -19,6 +19,9 @@
   - [Adding *Utils.py* file function call.](#adding-utilspy-file-function-call)
 - [4 Splitting main.py using routers v1.1.5](#4-splitting-mainpy-using-routers-v115)
   - [Routing Prefix and tags](#routing-prefix-and-tags)
+- [5 Tokens and login Flow v1.1.6](#5-tokens-and-login-flow-v116)
+  - [JWT token components:](#jwt-token-components)
+  - [Token authentication flow:](#token-authentication-flow)
 
 # 1 Coding CRUD
 
@@ -533,3 +536,41 @@ app.include_router(users.router)
 
   ```
   With this modification endpoint : **"/posts"** is converted to **"/"**
+
+# 5 Tokens and login Flow v1.1.6
+
+  - So in this section we are gonna use *JWT* for authentication purposes.
+  - There are 2 main ways : *session based authentication* and *JWT* 
+  - **Session based:** After a user logs in, the server creates a session and stores it (usually in memory or a database). The server then sends a session ID to the client, which is stored in a cookie. Is stateful, The server needs to remember the session 
+  - **JWT:**After login, the server generates a token (like a JWT) and sends it to the client. The client stores it (usually in localStorage or a cookie) and sends it with each request. Is stateless, the server does not need to keep info , just verify the Token.
+  
+## JWT token components:
+
+  - Header--> Tipically containes *metadata* about the token (hash:256 , type: jwt)
+  - Payload-->Tipically contains the *username*
+  - Signature: Signature is composed of the following: 
+    - Header + Payload + password (hashed)
+## Token authentication flow:
+
+The image below describe the following steps:
+1. User logs in
+   1. The client sends credentials (like username and password) to the server.
+2. Server provides the token
+   1.  If credentials are valid, the server responds with a token (usually a JWT).
+3. Client side now uses that token for every request performed
+4. Now the client includes the Token in the header with: Header--> Authorization Bearer: (TOKEN) (this step is done automatically by the client app )
+![Alt text](IMAGES/token_flow.png)
+
+
+Example using Pyhton
+``` Python
+import requests
+
+token = "your_token_here"
+headers = {
+    "Authorization": f"Bearer {token}"
+}
+
+response = requests.get("https://api.example.com/data", headers=headers)
+
+```
