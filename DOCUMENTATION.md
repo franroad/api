@@ -21,7 +21,9 @@
   - [Routing Prefix and tags](#routing-prefix-and-tags)
 - [5 Tokens and login Flow v1.1.6](#5-tokens-and-login-flow-v116)
   - [JWT token components:](#jwt-token-components)
-  - [Token authentication flow:](#token-authentication-flow)
+    - [Token obetention flow:](#token-obetention-flow)
+  - [Login Flow](#login-flow)
+    - [Code for the login](#code-for-the-login)
 
 # 1 Coding CRUD
 
@@ -550,7 +552,7 @@ app.include_router(users.router)
   - Payload-->Tipically contains the *username*
   - Signature: Signature is composed of the following: 
     - Header + Payload + password (hashed)
-## Token authentication flow:
+### Token obetention flow:
 
 The image below describe the following steps:
 1. User logs in
@@ -574,3 +576,12 @@ headers = {
 response = requests.get("https://api.example.com/data", headers=headers)
 
 ```
+## Login Flow
+1. The user provides user and passwrod , the password is in plain text and we have it stored as hash (onece is hashed it is not reversible)
+2. The server will find the user and return the password (hashed).
+3. Then we need to hash the password provided and confirm that the both hash are equal
+   1. Passlib with [bcrypt] add the salt by default to the password so no password are equal between two users even the plain text is.
+   
+### Code for the login
+
+ * We are adding the Response Object as is the tool that allows us to return cookies, headers (working with Token stuff)

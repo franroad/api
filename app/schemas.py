@@ -56,4 +56,6 @@ class UserResponseGet (BaseModel):
     def format_created_at(self, dt: datetime, _) -> str:
         return dt.strftime("%Y-%m-%d %H:%M")
 
-   
+class UserSignin(BaseModel):
+    email:EmailStr
+    password:str
