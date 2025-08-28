@@ -24,6 +24,7 @@
     - [Token obetention flow:](#token-obetention-flow)
   - [Login Flow](#login-flow)
     - [Code for the login](#code-for-the-login)
+    - [Creating the token](#creating-the-token)
 
 # 1 Coding CRUD
 
@@ -585,3 +586,11 @@ response = requests.get("https://api.example.com/data", headers=headers)
 ### Code for the login
 
  * We are adding the Response Object as is the tool that allows us to return cookies, headers (working with Token stuff)
+
+
+ADD CODE SAMPLE HERE
+
+
+### Creating the token 
+- Once we have defined the code logic for the tokne creaiton in the previous step we need to generate the token , we need to install the following:
+  ``pip install pyjwt`` or ``python-jose[cryptography]``
