@@ -24,6 +24,7 @@
     - [Token obetention flow:](#token-obetention-flow)
   - [Login Flow](#login-flow)
     - [Code for the login](#code-for-the-login)
+    - [Validating the password and the Email](#validating-the-password-and-the-email)
     - [Creating the token](#creating-the-token)
 
 # 1 Coding CRUD
@@ -565,7 +566,7 @@ The image below describe the following steps:
 ![Alt text](IMAGES/token_flow.png)
 
 
-Example using Pyhton
+Example using Pyhton for Resquest using token
 ``` Python
 import requests
 
@@ -590,7 +591,51 @@ response = requests.get("https://api.example.com/data", headers=headers)
 
 ADD CODE SAMPLE HERE
 
+### Validating the password and the Email
+1. Here we are using the ``OAuth2PasswordRequestForm`` that will generate the variables
+  - username
+  - password
+2. Then we do the query to find a user that matches with the mail provided
+3. If the user is found, the password is check with the function located``utils.py`` 
+4. In case the **hases** os the passwords match , the create token function is called and the token is returned
+
+```Python
+@router.post("/auth")
+def sign_in(user_cred:OAuth2PasswordRequestForm=Depends(),db: Session = Depends(database.get_db)):
+    user = db.query(models.Users).filter(models.Users.email == user_cred.username).first()
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "Invalid credentials") #checks for the email
+        
+    if not utils.check(user_cred.password,user.password):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "Invalid credentials") # checks the passwords match
+    
+    
+    #Create token, we have used the user id as payload of the token but can be any ohter field
+    token=oauth.create_access_token(data={"user_id": user.id}) # we are passing the id in form of dictionary that is what is expecting
+    #Return token
+    return {f"accestoken":token}
+```
 
 ### Creating the token 
-- Once we have defined the code logic for the tokne creaiton in the previous step we need to generate the token , we need to install the following:
-  ``pip install pyjwt`` or ``python-jose[cryptography]``
+   - Once we have defined the code logic for the tokne creaiton in the previous step we need to generate the token , we need to install the following:
+     ``pip install pyjwt`` or ``python-jose[cryptography]``  using the first here
+     1. Create a new file in ide routers that will hold the logic, the code is the following:
+
+       ``` Python 
+           SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+           ALGORITHM = "HS256"
+           ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+           def create_access_token(data: dict):
+               to_encode = data.copy()
+
+               expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+               to_encode.update({"exp": expire}) #Updating the varaibe, adding the expire time in the dict
+               encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+               return encoded_jwt
+       ```
+- JWT Token compoents:
+![Alt text](IMAGES/jwt-components.png)
+  
+

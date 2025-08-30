@@ -7,7 +7,7 @@ def hash_pasword(password: str):
     return hashed_password
 
 
-def check(password: str,hashed_password:str): # the verify function returns a bool
+def check(password: str,hashed_password:str): # the verify function returns a bool, is expecting 2 strings
     # input_password=pwd_context.hash(password)
     # stored_password=hashed_password
     return pwd_context.verify(password,hashed_password) # We have to use the verify function from passlib
