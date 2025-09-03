@@ -26,6 +26,8 @@
     - [Code for the login](#code-for-the-login)
     - [Validating the password and the Email](#validating-the-password-and-the-email)
     - [Creating the token](#creating-the-token)
+- [6 Verify user access and protect branches v1.1.7](#6-verify-user-access-and-protect-branches-v117)
+      - [Login Flow](#login-flow-1)
 
 # 1 Coding CRUD
 
@@ -607,14 +609,19 @@ def sign_in(user_cred:OAuth2PasswordRequestForm=Depends(),db: Session = Depends(
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "Invalid credentials") #checks for the email
         
-    if not utils.check(user_cred.password,user.password):
+    if not utils.check(user_cred.password,user.password): # We are passing the user input and the aready stored passwod for compare hashing
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "Invalid credentials") # checks the passwords match
     
     
-    #Create token, we have used the user id as payload of the token but can be any ohter field
+    #Create token, we have used the user id as content of the token but can be any ohter field
     token=oauth.create_access_token(data={"user_id": user.id}) # we are passing the id in form of dictionary that is what is expecting
     #Return token
-    return {f"accestoken":token}
+    return {"accestoken":token, "token_type": "bearer"}
+    
+
+
+
+    
 ```
 
 ### Creating the token 
@@ -627,15 +634,60 @@ def sign_in(user_cred:OAuth2PasswordRequestForm=Depends(),db: Session = Depends(
            ALGORITHM = "HS256"
            ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-           def create_access_token(data: dict):
-               to_encode = data.copy()
+          def create_access_token(data: dict):
+            to_encode = data.copy()
 
-               expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-               to_encode.update({"exp": expire}) #Updating the varaibe, adding the expire time in the dict
-               encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-               return encoded_jwt
+            expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            to_encode.update({"exp": expire}) #Updating the varaibe, adding the expire time in the dict
+            encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+            return encoded_jwt
        ```
 - JWT Token compoents:
 ![Alt text](IMAGES/jwt-components.png)
-  
 
+# 6 Verify user access and protect branches v1.1.7
+
+- The logic is as it follows:
+  
+-  We need to protect our branch such as (protects equals to adding the *Depends(oauth.get_current_user))* :
+    ``` Python 
+    @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)  my_post array of dict
+    def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user)):         
+    ```
+-  This will call the ``oauth.get_current_user`` function before running. Additionally the ``oauth.get_current_user`` will leverage the oauth2_scheme = **OAuth2PasswordBearer**, if the correct token and theaders are provided  no error is raises from **OAuth2PasswordBearer** and ``oauth.get_current_user`` calls ``oauth.verify_access_token``
+   -  ``` Python 
+       oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth")
+
+       def get_current_user(user_token: str= Depends(oauth2_scheme)):
+        credentials_exception=HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Could not validte the Credentials",headers={"WWW-Authenticate": "Bearer"})
+        return verify_access_token(user_token,credentials_exception)
+    ```
+**NOTE:** *oauth2_scheme, is a built-in fast api function that already is expecting the token in the following format:*
+            ***Authorization: Bearer <token>*** so this mean we have to add the headers to define the token: 
+![Alt text](IMAGES/adding_headers.png)
+- Finally the last function, if no error is raised the add post operation is performed.
+  
+  ``` Python 
+       def verify_access_token(user_token:str,credentials_exception):
+            try:
+                payload=jwt.decode(user_token,SECRET_KEY,algorithm=ALGORITHM)
+                id=payload.get("user_id") #Here we are geting the payload we have configured (the id)
+                
+                if id is None:
+                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail= "Not authenticated")
+                
+                #token_data=schemas.TokenData(id=id) in case validation is needed
+                
+            except  InvalidTokenError:
+                raise credentials_exception
+            
+            return id
+
+    ```
+Basically we are performing a validation from multiple dependencies/functions and if no error is raised the function of the apo endpoint is granted like adding a post.
+
+#### Login Flow
+1. Reach the Path **/auth** if creadentials are correct a token is provided
+2. when reaching a protected branch add the Header **Authorization: Bearer <token>** the protected enpoint function will call the *get_current_user* function
+3. *get_current_user* function will obetain the token from the *oauth2_scheme*  after its built-in validation
+4. *get_current_user* function will call *verify_access_token* will decode and verify the token using the **SECRET_KEY** if all is fine no error will raised, the id embeeded in the token will be returned and the operation from the protected endpoint will be completed.

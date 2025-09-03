@@ -1,0 +1,47 @@
+import jwt
+from fastapi import HTTPException,status, Depends
+from datetime import datetime,timezone,timedelta
+from jwt.exceptions import InvalidTokenError
+from fastapi.security import OAuth2PasswordBearer
+from . import schemas
+# in the "auth" endpoint
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth") #Looks for the token format: Authorization: Bearer <token>
+
+# We will need secret key
+#Algorithm we are gonna use 
+#Expiration time 
+
+SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire}) #Updating the varaibe, adding the expire time in the dict
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+def verify_access_token(user_token:str,credentials_exception):
+    try:
+        payload=jwt.decode(user_token,SECRET_KEY,algorithm=ALGORITHM)
+        id=payload.get("user_id") #Here we are geting the payload we have configured (the id)
+        
+        if id is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail= "Not authenticated")
+        
+        #token_data=schemas.TokenData(id=id) in case validation is needed
+        
+    except  InvalidTokenError:
+        raise credentials_exception
+    
+    return id
+    
+def get_current_user(user_token: str= Depends(oauth2_scheme)):
+    credentials_exception=HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Could not validte the Credentials",headers={"WWW-Authenticate": "Bearer"})
+    return verify_access_token(user_token,credentials_exception)
+
+        
+    
+    

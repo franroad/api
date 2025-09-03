@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends,APIRouter
-from .. import schemas,models,utils,database
+from .. import schemas,models,database,oauth
 from  sqlalchemy.orm import Session
 from typing import Optional, List
 
@@ -23,7 +23,7 @@ def get_posts(db: Session = Depends(database.get_db)):
 
 #we still using the pydantic class created above (Post)
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
-def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db)): #function expects new_post param. compliance with pydantic Post class
+def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user)): #function expects new_post param. compliance with pydantic Post class
 
 
     #post = models.PostORM(title=new_post.title, content=new_post.content, published=new_post.published)

@@ -31,6 +31,10 @@ class PostResponseUpdate (PostResponse): #This model defines the response that t
     def message(self) -> str:
         # now you can refer to self.email
         return "Post updated Succesfully"
+    
+########################################USERS#########################################################
+#USERS
+########################################USERS#########################################################
    
 class UserResponse (BaseModel):
     email:str
@@ -59,3 +63,11 @@ class UserResponseGet (BaseModel):
 class UserSignin(BaseModel):
     email:EmailStr
     password:str
+
+########################################TOKEN#########################################################
+#TOKEN
+########################################TOKEN#########################################################
+
+class Token(BaseModel):
+    token:str
+    token_type:str
