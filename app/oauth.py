@@ -25,7 +25,9 @@ def create_access_token(data: dict):
 
 def verify_access_token(user_token:str,credentials_exception):
     try:
-        payload=jwt.decode(user_token,SECRET_KEY,algorithm=ALGORITHM)
+        
+        payload = jwt.decode(user_token, SECRET_KEY, algorithms=[ALGORITHM])
+
         id=payload.get("user_id") #Here we are geting the payload we have configured (the id)
         
         if id is None:
@@ -36,10 +38,12 @@ def verify_access_token(user_token:str,credentials_exception):
     except  InvalidTokenError:
         raise credentials_exception
     
-    return id
+    else:
+    
+        return id
     
 def get_current_user(user_token: str= Depends(oauth2_scheme)):
-    credentials_exception=HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Could not validte the Credentials",headers={"WWW-Authenticate": "Bearer"})
+    credentials_exception=HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Could not validte the Credentials", headers={"WWW-Authenticate": "Bearer"})
     return verify_access_token(user_token,credentials_exception)
 
         

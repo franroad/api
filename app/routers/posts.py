@@ -9,7 +9,7 @@ router= APIRouter(
 )
 
 @router.get("/",response_model=List[schemas.PostResponse]) #to retrieve all posts
-def get_posts(db: Session = Depends(database.get_db)):
+def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user)):
     posts=db.query(models.PostORM).all() #models=tables
     
     return posts #removing the dict and retunr the stuff  no data keyword
@@ -25,7 +25,7 @@ def get_posts(db: Session = Depends(database.get_db)):
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
 def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user)): #function expects new_post param. compliance with pydantic Post class
 
-
+    print(user_id)
     #post = models.PostORM(title=new_post.title, content=new_post.content, published=new_post.published)
     post=models.PostORM(**new_post.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
     db.add(post)

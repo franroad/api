@@ -687,7 +687,7 @@ def sign_in(user_cred:OAuth2PasswordRequestForm=Depends(),db: Session = Depends(
 Basically we are performing a validation from multiple dependencies/functions and if no error is raised the function of the apo endpoint is granted like adding a post.
 
 #### Login Flow
-1. Reach the Path **/auth** if creadentials are correct a token is provided
+1. Reach the Path **/auth** using a POST request if creadentials are correct a signed token is provided
 2. when reaching a protected branch add the Header **Authorization: Bearer <token>** the protected enpoint function will call the *get_current_user* function
 3. *get_current_user* function will obetain the token from the *oauth2_scheme*  after its built-in validation
 4. *get_current_user* function will call *verify_access_token* will decode and verify the token using the **SECRET_KEY** if all is fine no error will raised, the id embeeded in the token will be returned and the operation from the protected endpoint will be completed.
