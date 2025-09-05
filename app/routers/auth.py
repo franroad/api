@@ -8,7 +8,7 @@ router= APIRouter(
     tags=['Authentication'] # This is mainly for improveing the readability of http://localhost:8000/docs
 )
 
-@router.post("/auth")
+@router.post("/auth", response_model=schemas.Token)
 def sign_in(user_cred:OAuth2PasswordRequestForm=Depends(),db: Session = Depends(database.get_db)):
     user = db.query(models.Users).filter(models.Users.email == user_cred.username).first()
 
@@ -22,7 +22,5 @@ def sign_in(user_cred:OAuth2PasswordRequestForm=Depends(),db: Session = Depends(
     #Create token, we have used the user id as content of the token but can be any ohter field
     token=oauth.create_access_token(data={"user_id": user.id}) # we are passing the id in form of dictionary that is what is expecting
     #Return token
-    return {"accestoken":token, "token_type": "bearer"}
-
-
-    
+    return {"access_token": token, "token_type": "bearer","msg":"this should not be displayed test pydantic"}
+#Thanks to the pydantic response model we are only showing what we want.

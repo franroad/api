@@ -684,6 +684,22 @@ def sign_in(user_cred:OAuth2PasswordRequestForm=Depends(),db: Session = Depends(
             return id
 
     ```
+
+We can also add another except in case the error is because of the token expiration:
+
+``` Python 
+      except ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Session Expired", headers={"WWW-Authenticate": "Bearer"})
+      except  InvalidTokenError:
+        raise credentials_exception
+    
+    
+    else:
+    
+        return id
+
+```
+
 Basically we are performing a validation from multiple dependencies/functions and if no error is raised the function of the apo endpoint is granted like adding a post.
 
 #### Login Flow
@@ -691,3 +707,31 @@ Basically we are performing a validation from multiple dependencies/functions an
 2. when reaching a protected branch add the Header **Authorization: Bearer <token>** the protected enpoint function will call the *get_current_user* function
 3. *get_current_user* function will obetain the token from the *oauth2_scheme*  after its built-in validation
 4. *get_current_user* function will call *verify_access_token* will decode and verify the token using the **SECRET_KEY** if all is fine no error will raised, the id embeeded in the token will be returned and the operation from the protected endpoint will be completed.
+
+**NOTE: The get_current_user function has been updated for getting the user data and return it**
+
+- We use the *verify_user* funciton to get the **id** and then with the id we run the query to get the user info. The id is embeded in the token
+  
+*UPDATED FUNCTION:*
+``` Python 
+      
+def get_current_user(user_token: str= Depends(oauth2_scheme),db: Session = Depends(database.get_db)):
+    credentials_exception=HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Could not validte the Credentials", headers={"WWW-Authenticate": "Bearer"})
+    user_id=verify_access_token(user_token,credentials_exception) # Returns what verify_user returns
+    user=db.query(models.Users).filter(models.Users.id == user_id).first()
+    return user
+```
+*EXMAPLE FUNCTION GETTING THE USER.EMAIL*
+
+```Python
+@router.get("/{id}",response_model=schemas.UserResponseGet) #resonse_model makes sure that unwanted field like password is not retrieved and shown
+def get_user (id:int,db: Session = Depends(database.get_db),current_user:str =Depends(oauth.get_current_user)):
+    print(current_user.email)
+    user=db.query(models.Users).filter(models.Users.id == id).first()
+    if user:
+        return user
+    else:
+        raise HTTPException(status_code=404, detail=f"User with id: {id} not found")
+    
+
+```

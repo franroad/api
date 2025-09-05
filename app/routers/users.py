@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from .. import schemas,models,utils,database
+from .. import schemas,models,utils,database,oauth
 from  sqlalchemy.orm import Session
 from typing import Optional, List
 
@@ -29,7 +29,8 @@ def create_user(new_user: schemas.Useradd, db: Session = Depends(database.get_db
 
 
 @router.get("/{id}",response_model=schemas.UserResponseGet) #resonse_model makes sure that unwanted field like password is not retrieved and shown
-def get_user (id:int,db: Session = Depends(database.get_db)):
+def get_user (id:int,db: Session = Depends(database.get_db),current_user:str =Depends(oauth.get_current_user)):
+    print(current_user.email)
     user=db.query(models.Users).filter(models.Users.id == id).first()
     if user:
         return user

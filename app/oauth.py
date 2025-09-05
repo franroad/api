@@ -1,9 +1,11 @@
 import jwt
 from fastapi import HTTPException,status, Depends
 from datetime import datetime,timezone,timedelta
-from jwt.exceptions import InvalidTokenError
+from jwt.exceptions import InvalidTokenError,ExpiredSignatureError
 from fastapi.security import OAuth2PasswordBearer
-from . import schemas
+from . import schemas,database,models
+from  sqlalchemy.orm import Session
+
 # in the "auth" endpoint
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth") #Looks for the token format: Authorization: Bearer <token>
 
@@ -34,18 +36,22 @@ def verify_access_token(user_token:str,credentials_exception):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail= "Not authenticated")
         
         #token_data=schemas.TokenData(id=id) in case validation is needed
-        
+
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Session Expired", headers={"WWW-Authenticate": "Bearer"})    
     except  InvalidTokenError:
         raise credentials_exception
+   
     
     else:
     
         return id
     
-def get_current_user(user_token: str= Depends(oauth2_scheme)):
+def get_current_user(user_token: str= Depends(oauth2_scheme),db: Session = Depends(database.get_db)):
     credentials_exception=HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Could not validte the Credentials", headers={"WWW-Authenticate": "Bearer"})
-    return verify_access_token(user_token,credentials_exception)
-
+    user_id=verify_access_token(user_token,credentials_exception) # Returns what verify_user returns
+    user=db.query(models.Users).filter(models.Users.id == user_id).first()
+    return user
         
     
     
