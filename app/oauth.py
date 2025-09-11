@@ -49,7 +49,7 @@ def verify_access_token(user_token:str,credentials_exception):
     
 def get_current_user(user_token: str= Depends(oauth2_scheme),db: Session = Depends(database.get_db)):
     credentials_exception=HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Could not validte the Credentials", headers={"WWW-Authenticate": "Bearer"})
-    user_id=verify_access_token(user_token,credentials_exception) # Returns what verify_user returns
+    user_id=verify_access_token(user_token,credentials_exception) # Returns decoded Token
     user=db.query(models.Users).filter(models.Users.id == user_id).first()
     return user
         

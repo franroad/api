@@ -28,6 +28,7 @@
     - [Creating the token](#creating-the-token)
 - [6 Verify user access and protect branches v1.1.7](#6-verify-user-access-and-protect-branches-v117)
       - [Login Flow](#login-flow-1)
+- [6.1 Updateing get\_current\_user](#61-updateing-get_current_user)
 
 # 1 Coding CRUD
 
@@ -707,6 +708,8 @@ Basically we are performing a validation from multiple dependencies/functions an
 2. when reaching a protected branch add the Header **Authorization: Bearer <token>** the protected enpoint function will call the *get_current_user* function
 3. *get_current_user* function will obetain the token from the *oauth2_scheme*  after its built-in validation
 4. *get_current_user* function will call *verify_access_token* will decode and verify the token using the **SECRET_KEY** if all is fine no error will raised, the id embeeded in the token will be returned and the operation from the protected endpoint will be completed.
+
+# 6.1 Updateing get_current_user
 
 **NOTE: The get_current_user function has been updated for getting the user data and return it**
 
