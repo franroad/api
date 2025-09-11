@@ -30,6 +30,7 @@
       - [Login Flow](#login-flow-1)
 - [6.1 Updateing get\_current\_user](#61-updateing-get_current_user)
 - [7 Postman Features](#7-postman-features)
+- [8 Sql Relationships](#8-sql-relationships)
 
 # 1 Coding CRUD
 
@@ -740,4 +741,16 @@ def get_user (id:int,db: Session = Depends(database.get_db),current_user:str =De
 
 ```
 # 7 Postman Features
+- Environtments: Allows you to define variables based in the environment that you are working in.
 
+- Automate token  retrival and Login:
+  - In the user login we are gona set the foloowing in the test, we are getting the token value in json and storing it as variable
+```Java
+
+pm.environment.set("token",pm.response.json().access_token);
+
+console.log(pm.environment.get("token"));
+```
+ - Then in the authorization of the desired endpoint, we hjust have to set the variable ``{{token}}`` (REMEMBER TO SELECT THE CORRECT ENVIRONMENT)
+
+# 8 Sql Relationships
