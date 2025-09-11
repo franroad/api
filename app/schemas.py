@@ -6,10 +6,6 @@ class Post (BaseModel): # here we use pydantic for define the schema
     content: str
     published: bool = True # this is an optional/odefault to true
 
-class Useradd(BaseModel):
-    email:EmailStr
-    password:str
-
 
 class PostUpdate (Post): # here we use our Post model to defina the schema
     pass #we are getting the values from the Post
@@ -35,7 +31,12 @@ class PostResponseUpdate (PostResponse): #This model defines the response that t
 ########################################USERS#########################################################
 #USERS
 ########################################USERS#########################################################
-   
+
+class Useradd(BaseModel):
+    email:EmailStr
+    password:str
+
+
 class UserResponse (BaseModel):
     email:str
     created_at: datetime

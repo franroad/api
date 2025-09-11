@@ -30,7 +30,7 @@ def create_user(new_user: schemas.Useradd, db: Session = Depends(database.get_db
 
 @router.get("/{id}",response_model=schemas.UserResponseGet) #resonse_model makes sure that unwanted field like password is not retrieved and shown
 def get_user (id:int,db: Session = Depends(database.get_db),current_user:str =Depends(oauth.get_current_user)):
-    print(current_user.email)
+    print("RETURNED INFO:",current_user.email,current_user.id)
     user=db.query(models.Users).filter(models.Users.id == id).first()
     if user:
         return user

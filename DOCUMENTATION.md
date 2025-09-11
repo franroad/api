@@ -29,6 +29,7 @@
 - [6 Verify user access and protect branches v1.1.7](#6-verify-user-access-and-protect-branches-v117)
       - [Login Flow](#login-flow-1)
 - [6.1 Updateing get\_current\_user](#61-updateing-get_current_user)
+- [7 Postman Features](#7-postman-features)
 
 # 1 Coding CRUD
 
@@ -738,3 +739,5 @@ def get_user (id:int,db: Session = Depends(database.get_db),current_user:str =De
     
 
 ```
+# 7 Postman Features
+
