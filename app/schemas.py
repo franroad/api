@@ -5,6 +5,7 @@ class Post (BaseModel): # here we use pydantic for define the schema
     title: str
     content: str
     published: bool = True # this is an optional/odefault to true
+    user_id: int =1444 
 
 
 class PostUpdate (Post): # here we use our Post model to defina the schema

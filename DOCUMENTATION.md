@@ -31,6 +31,7 @@
 - [6.1 Updateing get\_current\_user](#61-updateing-get_current_user)
 - [7 Postman Features](#7-postman-features)
 - [8 Sql Relationships](#8-sql-relationships)
+  - [Updated table foreign key](#updated-table-foreign-key)
 
 # 1 Coding CRUD
 
@@ -751,6 +752,23 @@ pm.environment.set("token",pm.response.json().access_token);
 
 console.log(pm.environment.get("token"));
 ```
- - Then in the authorization of the desired endpoint, we hjust have to set the variable ``{{token}}`` (REMEMBER TO SELECT THE CORRECT ENVIRONMENT)
+ - Then in the authorization of the desired endpoint, we hjust have to add the variable ``{{token}}`` (REMEMBER TO SELECT THE CORRECT ENVIRONMENT)
 
 # 8 Sql Relationships
+We need to correlate Posts and Users Tables
+ For that we ¡have to recreate the tables adding the user_id as foreign key in the posts table
+## Updated table foreign key
+
+```Python
+class PostORM(Base):
+    __tablename__="posts_orm"
+
+    id=Column(Integer, primary_key=True, nullable=False)
+    title=Column(String, nullable=False)
+    content=Column(String, nullable=False) 
+    published=Column(Boolean, server_default='TRUE')
+    created_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'))
+    user_id=Column(Integer, ForeignKey("Users.id", ondelete="CASCADE"),nullable=False) 
+
+```
+- We delete and sql alchemy will recreate the table, to avoid this we will see how to use Alembic for database migration.
