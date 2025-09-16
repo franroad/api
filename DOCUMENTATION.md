@@ -33,6 +33,7 @@
 - [8 Sql Relationships v1.1.8](#8-sql-relationships-v118)
   - [Updated table foreign key](#updated-table-foreign-key)
   - [Using the get\_current\_user](#using-the-get_current_user)
+- [9 Deleting, Updating and Getting your own posts v1.1.9](#9-deleting-updating-and-getting-your-own-posts-v119)
 
 # 1 Coding CRUD
 
@@ -777,7 +778,7 @@ class PostORM(Base):
 ## Using the get_current_user
 - Now that the posts table requires the user id to be added , we leverage the info that ``get_current_user`` is returning
 
-This way the info is automatically added based in the token (the user authenticated is the one that creates the post)
+This way the info is automatically added based in the token (the user authenticated is the one that creates the post) and no user intervnetion is required.
 
 ```Python
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
@@ -795,3 +796,4 @@ def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),
     #return {"message_from_server": f"New post added!  Title: {post.title}"}
     return post
 ```
+# 9 Deleting, Updating and Getting your own posts v1.1.9

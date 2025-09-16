@@ -57,37 +57,48 @@ def get_post(id: int, db: Session = Depends(database.get_db)):#performing valida
 
 
 @router.delete("/{id}")
-def delete_post(id: int, db: Session = Depends(database.get_db) ):
+def delete_post(id: int, db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user) ):
    
     post = db.query(models.PostORM).filter(models.PostORM.id == id).first()
 
-    if post:
-        db.delete(post)
-        db.commit()
-        
-        raise HTTPException(status_code=status.HTTP_200_OK,detail={"info": f"Post with title: {post.title!r} and ID: {post.id!r} Succesfully deleted"})
-        
-    else:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with ID: {id} not found"} )
+    if post is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with ID {id} not found") #First we check the existence
+
+    if post.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Operation not allowed")
+
+    db.delete(post)
+    db.commit()
+    
+    return {"info": f"Post with title: {post.title!r} and ID: {post.id!r} successfully deleted"}
+    
     
 # GETTING THE ID AND PASSING THE VALUES TO BE UPDATED
 @router.put("/{id}",response_model=schemas.PostResponseUpdate)
-def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(database.get_db)): #Post is the pydacntic class
+def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user)): #Post is the pydacntic class
     
     post_query=db.query(models.PostORM).filter(models.PostORM.id == id)#query object, can call an update (bulk)
     post=post_query.first()# used to check the existence (model instance cannot call an update)
     
-    if post:#IF post is not none raise 200 else 404
-        post_query.update(entry.dict(),synchronize_session=False)
-        
-        db.commit()
-        #db.refresh(post)
-        return  post_query.first()
-        # raise HTTPException(status_code=status.HTTP_200_OK, detail={"info": f"Post: {id},{post} Succesfully updated"})
-        
-    else:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"Error": f"Post with ID: {id} not found"})
+    post_query = db.query(models.PostORM).filter(models.PostORM.id == id)
+    post = post_query.first()
+    if not post: #First we check the existence
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Post with ID {id} not found"
+        )
 
+    # 2. Compruebo autorización
+    if post.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not permitted to update this post"
+        )
 
+    # 3. Actualizo, confirmo y devuelvo
+    post_query.update(entry.dict(), synchronize_session=False)
+    db.commit()
+    db.refresh(post)  
+    return post
 ###---------USER STUFF---------###
 
