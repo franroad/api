@@ -5,7 +5,7 @@ class Post (BaseModel): # here we use pydantic for define the schema
     title: str
     content: str
     published: bool = True # this is an optional/odefault to true
-    user_id: int =1444 
+   
 
 
 class PostUpdate (Post): # here we use our Post model to defina the schema
@@ -16,6 +16,7 @@ class PostResponse (BaseModel): #This model defines the response that the user w
     content: str
     id: int
     created_at: datetime
+    user_id: int
     
     @field_serializer("created_at")
     def format_created_at(self, dt: datetime, _) -> str:

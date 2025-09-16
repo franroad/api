@@ -25,10 +25,10 @@ def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.g
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
 def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user)): #function expects new_post param. compliance with pydantic Post class
 
-    print(current_user.id)
+    
     #post = models.PostORM(title=new_post.title, content=new_post.content, published=new_post.published)
-    new_post.user_id=int(current_user.id)
-    post=models.PostORM(**new_post.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
+    #new_post.user_id=int(current_user.id)
+    post=models.PostORM(user_id=current_user.id,**new_post.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
     
     db.add(post)
     db.commit()

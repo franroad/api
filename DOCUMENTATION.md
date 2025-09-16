@@ -30,8 +30,9 @@
       - [Login Flow](#login-flow-1)
 - [6.1 Updateing get\_current\_user](#61-updateing-get_current_user)
 - [7 Postman Features](#7-postman-features)
-- [8 Sql Relationships](#8-sql-relationships)
+- [8 Sql Relationships v1.1.8](#8-sql-relationships-v118)
   - [Updated table foreign key](#updated-table-foreign-key)
+  - [Using the get\_current\_user](#using-the-get_current_user)
 
 # 1 Coding CRUD
 
@@ -754,7 +755,7 @@ console.log(pm.environment.get("token"));
 ```
  - Then in the authorization of the desired endpoint, we hjust have to add the variable ``{{token}}`` (REMEMBER TO SELECT THE CORRECT ENVIRONMENT)
 
-# 8 Sql Relationships
+# 8 Sql Relationships v1.1.8
 We need to correlate Posts and Users Tables
  For that we ¡have to recreate the tables adding the user_id as foreign key in the posts table
 ## Updated table foreign key
@@ -768,7 +769,29 @@ class PostORM(Base):
     content=Column(String, nullable=False) 
     published=Column(Boolean, server_default='TRUE')
     created_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'))
-    user_id=Column(Integer, ForeignKey("Users.id", ondelete="CASCADE"),nullable=False) 
+    user_id=Column(Integer, ForeignKey("users.id", ondelete="CASCADE"),nullable=False) 
 
 ```
 - We delete and sql alchemy will recreate the table, to avoid this we will see how to use Alembic for database migration.
+  
+## Using the get_current_user
+- Now that the posts table requires the user id to be added , we leverage the info that ``get_current_user`` is returning
+
+This way the info is automatically added based in the token (the user authenticated is the one that creates the post)
+
+```Python
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
+def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user)): #function expects new_post param. compliance with pydantic Post class
+
+    
+    #post = models.PostORM(title=new_post.title, content=new_post.content, published=new_post.published)
+    #new_post.user_id=int(current_user.id)
+    post=models.PostORM(user_id=current_user.id,**new_post.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
+    
+    db.add(post)
+    db.commit()
+    db.refresh(post)
+
+    #return {"message_from_server": f"New post added!  Title: {post.title}"}
+    return post
+```
