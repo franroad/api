@@ -7,13 +7,24 @@ router= APIRouter(
     prefix="/posts",
     tags=['posts'] # This is mainly for improveing the readability of http://localhost:8000/docs
 )
-
-@router.get("/",response_model=List[schemas.PostResponse]) #to retrieve all posts
+# RETRIEVE ALL POSTS
+@router.get("/",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
 def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user)):
     posts=db.query(models.PostORM).all() #models=tables
     
     return posts #removing the dict and retunr the stuff  no data keyword
 
+# RETRIEVE USER POSTS
+
+@router.get("/my-posts",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
+def get_posts(db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user)):
+    
+    posts = db.query(models.PostORM).filter(models.PostORM.user_id == current_user.id).all() #models=tables
+    
+    if not posts:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="You have no posts ADD one!.🤩")
+        
+    return posts #removing the dict and retunr the stuff  no data keyword
 
 
 #creating a post WITH PARAMETERIZED query (%s) in case in a future we need to change smthing easier
@@ -100,5 +111,6 @@ def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(databas
     db.commit()
     db.refresh(post)  
     return post
-###---------USER STUFF---------###
+
+
 

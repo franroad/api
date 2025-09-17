@@ -797,3 +797,64 @@ def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),
     return post
 ```
 # 9 Deleting, Updating and Getting your own posts v1.1.9
+- Deleting your own post , so no other user can doit
+```Python
+@router.delete("/{id}")
+def delete_post(id: int, db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user) ):
+   
+    post = db.query(models.PostORM).filter(models.PostORM.id == id).first()
+
+    if post is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with ID {id} not found") #First we check the existence
+
+    if post.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Operation not allowed")
+
+    db.delete(post)
+    db.commit()
+    
+    return {"info": f"Post with title: {post.title!r} and ID: {post.id!r} successfully deleted"}
+```
+- Updating your own post
+  
+```Python
+@router.put("/{id}",response_model=schemas.PostResponseUpdate)
+def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user)): #Post is the pydacntic class
+    
+    post_query=db.query(models.PostORM).filter(models.PostORM.id == id)#query object, can call an update (bulk)
+    post=post_query.first()# used to check the existence (model instance cannot call an update)
+    
+    post_query = db.query(models.PostORM).filter(models.PostORM.id == id)
+    post = post_query.first()
+    if not post: #First we check the existence
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Post with ID {id} not found"
+        )
+
+    # 2. Compruebo autorización
+    if post.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not permitted to update this post"
+        )
+
+    # 3. Actualizo, confirmo y devuelvo
+    post_query.update(entry.dict(), synchronize_session=False)
+    db.commit()
+    db.refresh(post)  
+    return post
+```
+- Getting Only your own posts
+```Python
+# RETRIEVE USER POSTS
+@router.get("/my-posts",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
+def get_posts(db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user)):
+    
+    posts = db.query(models.PostORM).filter(models.PostORM.user_id == current_user.id).all() #models=tables
+    
+    if not posts:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="You have no posts ADD one!.🤩")
+        
+    return posts #removing the dict and retunr the stuff  no data keyword
+```
