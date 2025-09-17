@@ -3,6 +3,8 @@ from .database import Base
 from sqlalchemy import Column, Integer, String, Boolean,ForeignKey
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
+from sqlalchemy.orm import relationship
+
 
 #here we are creting another table to keep the old one and the new let`s name it posts_orm
 
@@ -15,6 +17,8 @@ class PostORM(Base):
     published=Column(Boolean, server_default='TRUE')
     created_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'))
     user_id=Column(Integer, ForeignKey("users.id", ondelete="CASCADE"),nullable=False) 
+
+    op = relationship ("Users")
 
 class Users(Base):
     __tablename__="users"

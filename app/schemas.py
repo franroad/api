@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_serializer, computed_field, EmailStr
+from pydantic import BaseModel, field_serializer, computed_field, EmailStr,Field,ConfigDict
 from datetime import datetime
 
 class Post (BaseModel): # here we use pydantic for define the schema
@@ -11,12 +11,22 @@ class Post (BaseModel): # here we use pydantic for define the schema
 class PostUpdate (Post): # here we use our Post model to defina the schema
     pass #we are getting the values from the Post
 
+class OpResponse (BaseModel):
+    email:str
+    created_at:datetime= Field(serialization_alias='Joined')
+    
+    @field_serializer("created_at")
+    def format_created_at(self, dt: datetime, _) -> str:
+        return dt.strftime("%Y-%m-%d %H:%M")
+    
+    
 class PostResponse (BaseModel): #This model defines the response that the user will get
     title: str
     content: str
     id: int
     created_at: datetime
     user_id: int
+    op: OpResponse
     
     @field_serializer("created_at")
     def format_created_at(self, dt: datetime, _) -> str:
@@ -66,6 +76,9 @@ class UserResponseGet (BaseModel):
 class UserSignin(BaseModel):
     email:EmailStr
     password:str
+
+# class UserPost(BaseModel):
+#     op:str
 
 ########################################TOKEN#########################################################
 #TOKEN

@@ -33,7 +33,8 @@
 - [8 Sql Relationships v1.1.8](#8-sql-relationships-v118)
   - [Updated table foreign key](#updated-table-foreign-key)
   - [Using the get\_current\_user](#using-the-get_current_user)
-- [9 Deleting, Updating and Getting your own posts v1.1.9](#9-deleting-updating-and-getting-your-own-posts-v119)
+- [9 Deleting, Updating and Getting your own posts and id relationship v1.1.9](#9-deleting-updating-and-getting-your-own-posts-and-id-relationship-v119)
+  - [Id relationship](#id-relationship)
 
 # 1 Coding CRUD
 
@@ -796,7 +797,7 @@ def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),
     #return {"message_from_server": f"New post added!  Title: {post.title}"}
     return post
 ```
-# 9 Deleting, Updating and Getting your own posts v1.1.9
+# 9 Deleting, Updating and Getting your own posts and id relationship v1.1.9
 - Deleting your own post , so no other user can doit
 ```Python
 @router.delete("/{id}")
@@ -858,3 +859,35 @@ def get_posts(db: Session = Depends(database.get_db),current_user:str=Depends(oa
         
     return posts #removing the dict and retunr the stuff  no data keyword
 ```
+## Id relationship
+- We are retuning in the post , the ``user_id`` of who created the post but this is not the username then it's not providing useful info for the end user.
+
+- [Relationship](routers/models.py): 
+  -  ``op = relationship ("Users")``
+- Additionally, update the schema definitions: ``op`` is an ORM relationship that contains an object (or objects), so it is a nested field; primitive types are insufficient in Pydantic, therefore reference a Pydantic model such as OpResponse
+
+- To obtain a clearer message , we update the output of ``created_at`` to ``Joined``, hence the infor about the user is refered as joined, and the info regarding the post is refered as ``created_at``
+ ```Python
+class OpResponse (BaseModel):
+    email:str
+    created_at:datetime= Field(serialization_alias='Joined')
+    
+    @field_serializer("created_at")
+    def format_created_at(self, dt: datetime, _) -> str:
+        return dt.strftime("%Y-%m-%d %H:%M")
+    
+    
+    
+class PostResponse (BaseModel): #This model defines the response that the user will get
+    title: str
+    content: str
+    id: int
+    created_at: datetime
+    user_id: int
+    op: OpResponse
+    
+    @field_serializer("created_at")
+    def format_created_at(self, dt: datetime, _) -> str:
+        return dt.strftime("%Y-%m-%d %H:%M")
+
+  ```
