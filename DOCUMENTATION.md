@@ -33,8 +33,9 @@
 - [8 Sql Relationships v1.1.8](#8-sql-relationships-v118)
   - [Updated table foreign key](#updated-table-foreign-key)
   - [Using the get\_current\_user](#using-the-get_current_user)
-- [9 Deleting, Updating and Getting your own posts and id relationship v1.1.9](#9-deleting-updating-and-getting-your-own-posts-and-id-relationship-v119)
+- [9 Deleting, Updating and Getting your own posts and id and relationship v1.1.9](#9-deleting-updating-and-getting-your-own-posts-and-id-and-relationship-v119)
   - [Id relationship](#id-relationship)
+- [10 Query para meters v1.1.10](#10-query-para-meters-v1110)
 
 # 1 Coding CRUD
 
@@ -797,7 +798,7 @@ def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),
     #return {"message_from_server": f"New post added!  Title: {post.title}"}
     return post
 ```
-# 9 Deleting, Updating and Getting your own posts and id relationship v1.1.9
+# 9 Deleting, Updating and Getting your own posts and id and relationship v1.1.9
 - Deleting your own post , so no other user can doit
 ```Python
 @router.delete("/{id}")
@@ -866,7 +867,7 @@ def get_posts(db: Session = Depends(database.get_db),current_user:str=Depends(oa
   -  ``op = relationship ("Users")``
 - Additionally, update the schema definitions: ``op`` is an ORM relationship that contains an object (or objects), so it is a nested field; primitive types are insufficient in Pydantic, therefore reference a Pydantic model such as OpResponse
 
-- To obtain a clearer message , we update the output of ``created_at`` to ``Joined``, hence the infor about the user is refered as joined, and the info regarding the post is refered as ``created_at``
+- To obtain a clearer message , we update the output of ``created_at`` to ``Joined``, hence the information about the user is refered as joined, and the info regarding the post is refered as ``created_at``
  ```Python
 class OpResponse (BaseModel):
     email:str
@@ -891,3 +892,7 @@ class PostResponse (BaseModel): #This model defines the response that the user w
         return dt.strftime("%Y-%m-%d %H:%M")
 
   ```
+
+  # 10 Query para meters v1.1.10
+  - Everything on the rigth side of the questio mark are query parameters
+  - [Query](IMAGES/URL.png)

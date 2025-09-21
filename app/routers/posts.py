@@ -9,8 +9,8 @@ router= APIRouter(
 )
 # RETRIEVE ALL POSTS
 @router.get("/",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
-def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user)):
-    posts=db.query(models.PostORM).all() #models=tables
+def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user), limit:int=10,search:Optional[str] =""):
+    posts=db.query(models.PostORM).filter(models.PostORM.title.contains(search)).limit(limit).all() #models=tables
     
     return posts #removing the dict and retunr the stuff  no data keyword
 
