@@ -2,6 +2,7 @@ from fastapi import FastAPI, Response, status, HTTPException, Depends,APIRouter
 from .. import schemas,models,database,oauth
 from  sqlalchemy.orm import Session
 from typing import Optional, List
+from datetime import date, datetime, time
 
 router= APIRouter(
     prefix="/posts",
@@ -9,11 +10,31 @@ router= APIRouter(
 )
 # RETRIEVE ALL POSTS
 @router.get("/",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
-def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user), limit:int=10,search:Optional[str] =""):
-    posts=db.query(models.PostORM).filter(models.PostORM.title.contains(search)).limit(limit).all() #models=tables
+def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user),search:Optional[str] =""):
+    posts=db.query(models.PostORM).filter(models.PostORM.title.contains(search)).all() #models=tables
     
     return posts #removing the dict and retunr the stuff  no data keyword
 
+#RETIEVE POSTS BASED IN DATE AND SEARCH QUERY
+@router.get("/",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
+def get_posts(
+    db: Session = Depends(database.get_db),
+    user_id:int=Depends(oauth.get_current_user),
+    search:Optional[str] ="",
+    day_start:Optional[date]=None,day_end:Optional[date]=None):
+
+    start_dt = datetime.combine(day_start, time.min) if day_start else None   # 2025-09-12 00:00:00
+    end_dt   = datetime.combine(day_end,   time.max) if day_end   else None   # 2025-09-13 23:59:59.999999
+
+    query = db.query(models.PostORM)
+    if start_dt:
+        query = query.filter(models.PostORM.created_at >= start_dt)
+    if end_dt:
+        query = query.filter(models.PostORM.created_at <= end_dt)
+    
+    posts = query.order_by(models.PostORM.created_at.desc()).filter(models.PostORM.title.contains(search)).all()
+    
+    return posts #removing the dict and retunr the stuff  no data keyword
 # RETRIEVE USER POSTS
 
 @router.get("/my-posts",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
