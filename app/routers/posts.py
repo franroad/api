@@ -16,7 +16,7 @@ def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.g
     return posts #removing the dict and retunr the stuff  no data keyword
 
 #RETIEVE POSTS BASED IN DATE AND SEARCH QUERY
-@router.get("/",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
+@router.get("/date",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
 def get_posts(
     db: Session = Depends(database.get_db),
     user_id:int=Depends(oauth.get_current_user),
@@ -33,6 +33,10 @@ def get_posts(
         query = query.filter(models.PostORM.created_at <= end_dt)
     
     posts = query.order_by(models.PostORM.created_at.desc()).filter(models.PostORM.title.contains(search)).all()
+
+    if not posts:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No posts found for the provided paramenters")
+
     
     return posts #removing the dict and retunr the stuff  no data keyword
 # RETRIEVE USER POSTS
