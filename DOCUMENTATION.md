@@ -35,7 +35,7 @@
   - [Using the get\_current\_user](#using-the-get_current_user)
 - [9 Deleting, Updating and Getting your own posts and id and relationship v1.1.9](#9-deleting-updating-and-getting-your-own-posts-and-id-and-relationship-v119)
   - [Id relationship](#id-relationship)
-- [10 Query para meters v1.1.10](#10-query-para-meters-v1110)
+- [10 Query parameters v1.1.10](#10-query-parameters-v1110)
 
 # 1 Coding CRUD
 
@@ -893,6 +893,38 @@ class PostResponse (BaseModel): #This model defines the response that the user w
 
   ```
 
-  # 10 Query para meters v1.1.10
+  # 10 Query parameters v1.1.10
   - Everything on the rigth side of the questio mark are query parameters
   - [Query](IMAGES/URL.png)
+  - Query parametes are key value pairs that enable sengding additional info to the server witout changing the URL
+  - Example picing the posts based in date ranges:
+    - http://localhost:8000/posts/?start_date=2025-09-18&end_date=2025-09-21
+```Python
+@router.get("/date",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
+def get_posts(
+    db: Session = Depends(database.get_db),
+    user_id:int=Depends(oauth.get_current_user),
+    search:Optional[str] ="",
+    day_start:Optional[date]=None,day_end:Optional[date]=None):
+
+    start_dt = datetime.combine(day_start, time.min) if day_start else None   # 2025-09-12 00:00:00
+    end_dt   = datetime.combine(day_end,   time.max) if day_end   else None   # 2025-09-13 23:59:59.999999
+
+    query = db.query(models.PostORM)
+    if start_dt:
+        query = query.filter(models.PostORM.created_at >= start_dt)
+    if end_dt:
+        query = query.filter(models.PostORM.created_at <= end_dt)
+    
+    posts = query.order_by(models.PostORM.created_at.desc()).filter(models.PostORM.title.contains(search)).all()
+
+    if not posts:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No posts found for the provided paramenters")
+
+    
+    return posts #removing the dict and retunr the stuff  no data keyword
+# RETRIEVE USER POSTS
+
+```
+
+  

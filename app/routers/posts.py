@@ -79,6 +79,7 @@ def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),
        
 @router.get("/{id}",response_model=schemas.PostResponse)  # Get post per id (decorator/path parameter)
 def get_post(id: int, db: Session = Depends(database.get_db)):#performing validation with fast api we are saying I want an integer as input.
+   
     post = db.query(models.PostORM).filter(models.PostORM.id == id).first() #first entrance that matches
     #print(post)
     # cursor.execute("""SELECT * FROM posts WHERE id=%s""",(str(id)))#then we convert it to string for the query
