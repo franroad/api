@@ -37,3 +37,17 @@ def get_user (id:int,db: Session = Depends(database.get_db),current_user:str =De
     else:
         raise HTTPException(status_code=404, detail=f"User with id: {id} not found")
     
+@router.post("/recover_password")
+def validate_user(current_user:schemas.UserSignin ,db: Session = Depends(database.get_db)):
+    print(current_user.email)
+    user = db.query(models.Users).filter(models.Users.email == current_user.email).first()
+    if user:
+        code=utils.code_generator()
+        print(code)
+        return {"info": "If user exists you will get an email"}
+        
+        
+    
+    else:
+        return {"info": "user not found"}
+    

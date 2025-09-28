@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_serializer, computed_field, EmailStr,Field,ConfigDict
 from datetime import datetime
+from fastapi_mail import MessageSchema
 
 class Post (BaseModel): # here we use pydantic for define the schema
     title: str
@@ -75,7 +76,6 @@ class UserResponseGet (BaseModel):
 
 class UserSignin(BaseModel):
     email:EmailStr
-    password:str
 
 # class UserPost(BaseModel):
 #     op:str
@@ -87,3 +87,14 @@ class UserSignin(BaseModel):
 class Token(BaseModel):
     access_token:str
     token_type:str
+
+
+########################################E-mail#########################################################
+#E-mail
+########################################E-mail#########################################################
+class EmailMessage(BaseModel):
+    subject:str
+    recipients:list[EmailStr]
+    body:str
+    
+    

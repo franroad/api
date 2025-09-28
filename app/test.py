@@ -1,6 +1,4 @@
-from fastapi import FastAPI
-app=FastAPI() #create instance of fastapi
+import os
 
-@app.get("/hi")
-def test():
-    return {"hello world"}
+test=os.getenv("test")
+print(test)
