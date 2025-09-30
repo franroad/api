@@ -63,7 +63,7 @@ def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),
 
     
     #post = models.PostORM(title=new_post.title, content=new_post.content, published=new_post.published)
-    #new_post.user_id=int(current_user.id)
+    #new_post.user_id=int(current_user.id) we are getting the user_id value from the token to identify the user/creator
     post=models.PostORM(user_id=current_user.id,**new_post.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
     
     db.add(post)

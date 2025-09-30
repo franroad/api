@@ -25,5 +25,13 @@ class Users(Base):
     id=Column(Integer, primary_key=True, nullable= False)
     email= Column(String, nullable=False, unique=True)
     password= Column(String, nullable=False)
-    created_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False) 
+    created_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
+
+class Code(Base):
+    __tablename__="code"
+    id=Column(Integer, primary_key=True, nullable= False)
+    code=Column(String,nullable=False)
+    email= Column(String, nullable=False)
+    expires_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
+      
     

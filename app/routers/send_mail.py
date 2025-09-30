@@ -8,8 +8,8 @@ router=APIRouter()
 @router.post("/send-email")
 async def send_email(message:schemas.EmailMessage):
     html = f"""
-    <p>Hola {user.username},</p>
-    <p>Tu código para restablecer contraseña es: <strong>{code}</strong></p>
+    <p>Hola ,</p>
+    <p>Tu código para restablecer contraseña es: <strong></strong></p>
     <p>Expira en 15 minutos.</p>
     """
 
@@ -17,7 +17,7 @@ async def send_email(message:schemas.EmailMessage):
 
     email = MessageSchema(
         subject="Passqord Recovery",
-        recipients=user.email,
+        recipients=["franco.fran@gmail.com"],
         body=html,
         subtype="html"
     )
