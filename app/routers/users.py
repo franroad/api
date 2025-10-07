@@ -1,9 +1,11 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from .. import schemas,models,utils,database,oauth
+from fastapi import status, HTTPException, Depends, APIRouter,BackgroundTasks
+from .. import schemas,models,utils,database,oauth,mail
 from  sqlalchemy.orm import Session
 from typing import Optional, List
 from .. config import settings
 from datetime import datetime,timezone,timedelta
+
+
 router=APIRouter(
     prefix="/user",
     tags=['users']
@@ -40,7 +42,7 @@ def get_user (id:int,db: Session = Depends(database.get_db),current_user:str =De
 
 
 @router.post("/recover_password")
-def validate_user(current_user:schemas.UserSignin ,db: Session = Depends(database.get_db)):
+def validate_user(background_tasks: BackgroundTasks, current_user:schemas.UserSignin ,db: Session = Depends(database.get_db)):
     expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     print(current_user.email)
     user = db.query(models.Users).filter(models.Users.email == current_user.email).first()
@@ -51,7 +53,10 @@ def validate_user(current_user:schemas.UserSignin ,db: Session = Depends(databas
         row=models.Code(**thisdict) # como ya es un diccionario no tiene el atributo.dict
         db.add(row)
         db.commit()
-        print(hashed_code,thisdict)
+        print(code)
+        mail.send_email(code)
+        background_tasks.add_task(mail.send_email, code)
+        
         return {"info": "If user exists you will get an email"}
         
         
