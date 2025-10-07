@@ -37,6 +37,11 @@
   - [Id relationship](#id-relationship)
 - [10 Query parameters v1.1.10](#10-query-parameters-v1110)
 - [11 Env Variables v1.1.11](#11-env-variables-v1111)
+  - [Recover password logic](#recover-password-logic)
+    - [Code Table :](#code-table-)
+    - [Generating Code and forwarding mail:](#generating-code-and-forwarding-mail)
+      - [Forwarding mail](#forwarding-mail)
+    - [Endpoint for recieving  and validating the code](#endpoint-for-recieving--and-validating-the-code)
 
 # 1 Coding CRUD
 
@@ -929,3 +934,150 @@ def get_posts(
 ```
 
 # 11 Env Variables v1.1.11
+- In order to not having  the info and sensitive info hardcoded , we create a ``.env`` file that contains the sensitive info in the followig format: (This file should be placed in the root directory)
+```bash
+ SQLALCHEMY_DATABASE_URL = VALUE
+ 
+```
+Then we are using the pydantic settings fo import the env variables as it follows in the ``config.py`` file:
+```Python
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    SQLALCHEMY_DATABASE_URL:str
+
+    class Config:
+        env_file= ".env"
+
+
+
+settings=Settings()
+```
+Accessing the varaibles:
+```python
+from .. config import settings
+
+minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+```
+So the distribution looks as it follows:
+
+
+
+.
+└── api/
+    ├── .env
+    └── app/
+        ├── utils.py
+        ├── config.py
+        ├── main.py
+        ├── __init__.py
+        └── routers/
+*Remember to create a .gitignore and add the ``.env`` file*
+
+## Recover password logic
+1. Create and endpoint that recieves the user email
+2. generate a code and store it alongside the email in a new table so the code corresponds to a user additionally , add a expires_at field
+3. share this code trhough email
+4. generate a new endpint asking the user for the email, the  code and the new password, if the validations are passed , updates the password
+
+
+### Code Table :
+
+``models.py``
+
+```Python
+class Code(Base):
+    __tablename__="code"
+    id=Column(Integer, primary_key=True, nullable= False)
+    code=Column(String,nullable=False)
+    email= Column(String, nullable=False)
+    expires_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
+      
+```
+### Generating Code and forwarding mail:
+``routers/users.py``
+```Python
+@router.post("/recover_password")
+def validate_user(background_tasks: BackgroundTasks, current_user:schemas.UserSignin ,db: Session = Depends(database.get_db)):
+    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    print(current_user.email)
+    user = db.query(models.Users).filter(models.Users.email == current_user.email).first()
+    if user:
+        code=utils.code_generator()
+        hashed_code=utils.hash_pasword(code)
+        thisdict = {"code": hashed_code,"email": current_user.email,"expires_at": expire}
+        row=models.Code(**thisdict) # como ya es un diccionario no tiene el atributo.dict
+        db.add(row)
+        db.commit()
+        
+        background_tasks.add_task(mail.send_email, code, user=current_user.email) #We use background task as send_mail is async funciton
+        
+        # Schedule send_email(code) to run in the background 
+        # after the response is sent, without blocking the endpoint
+        return {"info": "If user exists you will get an email"}
+        
+        
+    
+    else:
+        return {"info": "user not found"}
+
+```
+#### Forwarding mail
+``mail.py``
+
+```Python
+async def send_email(code,user):
+    
+    html = f"""
+    <H3>Hola, {user}</H3>
+    <p>Tu código para restablecer contraseña es: <strong>{code}</strong></p>
+    <p>Expira en 15 minutos.</p>
+    """
+
+    
+
+    email = MessageSchema(
+        subject="Password Recovery",
+        recipients=["franco.fran@gmail.com"],
+        body=html,
+        subtype="html"
+    )
+
+    
+    
+    fm = FastMail(conf)
+    
+    await fm.send_message(email)
+    return {"message": "email has been sent"}
+```
+### Endpoint for recieving  and validating the code
+```Python
+@router.post("/update_password")
+def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(database.get_db)):
+    user = db.query(models.Users).filter(models.Users.email == user_info.email).first()
+    try:
+        db.query(models.Code).filter(models.Code.email == user_info.email).order_by(desc(models.Code.id)).limit(1).one()
+    except NoResultFound:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "request new code and retry in a couple of minuts")
+    
+    user_code=db.query(models.Code).filter(models.Code.email == user_info.email).order_by(desc(models.Code.id)).limit(1).one()
+    
+    print(user_code.id)
+    input=str(user_info.code)
+    existent=str(user_code.code)
+    code_exp=user_code.expires_at
+    print(code_exp)
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "Invalid credentials") #checks for the email
+        
+    if not utils.check(input,existent): # We are passing the user input and the aready stored passwod for compare hashing
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "Invalid Code")
+   
+    if datetime.now(timezone.utc)>=code_exp:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Code expired")
+
+    else:
+        return("input your password")
+    
+```
