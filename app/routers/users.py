@@ -1,9 +1,11 @@
 from fastapi import status, HTTPException, Depends, APIRouter,BackgroundTasks
 from .. import schemas,models,utils,database,oauth,mail
 from  sqlalchemy.orm import Session
-from typing import Optional, List
+
 from .. config import settings
 from datetime import datetime,timezone,timedelta
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from  sqlalchemy import desc
 
 
 router=APIRouter(
@@ -64,4 +66,32 @@ def validate_user(background_tasks: BackgroundTasks, current_user:schemas.UserSi
     
     else:
         return {"info": "user not found"}
+    
+@router.post("/update_password")
+def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(database.get_db)):
+    user = db.query(models.Users).filter(models.Users.email == user_info.email).first()
+    try:
+        db.query(models.Code).filter(models.Code.email == user_info.email).order_by(desc(models.Code.id)).limit(1).one()
+    except NoResultFound:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "request new code and retry in a couple of minuts")
+    
+    user_code=db.query(models.Code).filter(models.Code.email == user_info.email).order_by(desc(models.Code.id)).limit(1).one()
+    
+    print(user_code.id)
+    input=str(user_info.code)
+    existent=str(user_code.code)
+    code_exp=user_code.expires_at
+    print(code_exp)
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "Invalid credentials") #checks for the email
+        
+    if not utils.check(input,existent): # We are passing the user input and the aready stored passwod for compare hashing
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "Invalid Code")
+   
+    if datetime.now(timezone.utc)>=code_exp:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Code expired")
+
+    else:
+        return("input your password")
     

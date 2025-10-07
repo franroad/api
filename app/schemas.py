@@ -97,4 +97,10 @@ class EmailMessage(BaseModel):
     recipients:list[EmailStr]
     body:str
     
-    
+########################################update-password#########################################################
+#Update Password
+########################################update-password#########################################################
+class UpdatePassword(BaseModel):
+    email:EmailStr
+    code:int
+    new_password:str
