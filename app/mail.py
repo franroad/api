@@ -14,9 +14,10 @@ conf = ConnectionConfig(
 
 
 
-async def send_email(code):
+async def send_email(code,user):
+    
     html = f"""
-    <p>Hola ,</p>
+    <H3>Hola, {user}</H3>
     <p>Tu código para restablecer contraseña es: <strong>{code}</strong></p>
     <p>Expira en 15 minutos.</p>
     """
@@ -24,13 +25,13 @@ async def send_email(code):
     
 
     email = MessageSchema(
-        subject="Passqord Recovery",
+        subject="Password Recovery",
         recipients=["franco.fran@gmail.com"],
         body=html,
         subtype="html"
     )
 
-    print(email)
+    
     
     fm = FastMail(conf)
     

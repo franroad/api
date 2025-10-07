@@ -53,10 +53,11 @@ def validate_user(background_tasks: BackgroundTasks, current_user:schemas.UserSi
         row=models.Code(**thisdict) # como ya es un diccionario no tiene el atributo.dict
         db.add(row)
         db.commit()
-        print(code)
-        mail.send_email(code)
-        background_tasks.add_task(mail.send_email, code)
+        #mail.send_email(code)
+        background_tasks.add_task(mail.send_email, code, user=current_user.email) #We use background task as send_mail is async funciton
         
+        # Schedule send_email(code) to run in the background 
+        # after the response is sent, without blocking the endpoint
         return {"info": "If user exists you will get an email"}
         
         
