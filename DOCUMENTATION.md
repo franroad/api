@@ -41,7 +41,7 @@
     - [Code Table :](#code-table-)
     - [Generating Code and forwarding mail:](#generating-code-and-forwarding-mail)
       - [Forwarding mail](#forwarding-mail)
-    - [Endpoint for recieving  and validating the code](#endpoint-for-recieving--and-validating-the-code)
+    - [Endpoint for recieving , validating the code and updating the password](#endpoint-for-recieving--validating-the-code-and-updating-the-password)
 
 # 1 Coding CRUD
 
@@ -1050,23 +1050,26 @@ async def send_email(code,user):
     await fm.send_message(email)
     return {"message": "email has been sent"}
 ```
-### Endpoint for recieving  and validating the code
+### Endpoint for recieving , validating the code and updating the password
+
 ```Python
 @router.post("/update_password")
 def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(database.get_db)):
-    user = db.query(models.Users).filter(models.Users.email == user_info.email).first()
+    
     try:
-        db.query(models.Code).filter(models.Code.email == user_info.email).order_by(desc(models.Code.id)).limit(1).one()
+        user_code=db.query(models.Code).filter(models.Code.email == user_info.email).order_by(desc(models.Code.id)).limit(1).one()
     except NoResultFound:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "request new code and retry in a couple of minuts")
     
-    user_code=db.query(models.Code).filter(models.Code.email == user_info.email).order_by(desc(models.Code.id)).limit(1).one()
+    #user_code=db.query(models.Code).filter(models.Code.email == user_info.email).order_by(desc(models.Code.id)).limit(1).one()
     
     print(user_code.id)
     input=str(user_info.code)
     existent=str(user_code.code)
     code_exp=user_code.expires_at
     print(code_exp)
+
+    user = db.query(models.Users).filter(models.Users.email == user_info.email).first()
 
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "Invalid credentials") #checks for the email
@@ -1078,6 +1081,10 @@ def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(databas
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Code expired")
 
     else:
-        return("input your password")
-    
+         hashed_pass=utils.hash_pasword(user_info.new_password)
+         instance_query = db.query(models.Users).filter(models.Users.email == user_info.email)#We create the instance for running the.update
+         instance_query.update({"password":hashed_pass}, synchronize_session=False)
+         db.commit()
+         
+         return {"info": "Password updated succesfully! ✅ "}
 ```
