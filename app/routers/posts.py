@@ -131,8 +131,8 @@ def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(databas
         )
 
     # 3. Actualizo, confirmo y devuelvo
-    post_query.update(entry.dict(), synchronize_session=False)
-    db.commit()
+    post_query.update(entry.dict(), synchronize_session=False)# Genera el cambio en la sesion  hastga que se genera el commit
+    db.commit()# Hace durable el cambio
     db.refresh(post)  
     return post
 
