@@ -5,7 +5,7 @@ from  sqlalchemy.orm import Session
 from .. config import settings
 from datetime import datetime,timezone,timedelta
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
-from  sqlalchemy import desc
+from  sqlalchemy import desc,update
 
 
 router=APIRouter(
@@ -93,5 +93,16 @@ def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(databas
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Code expired")
 
     else:
-        return("input your password")
+         post_query = db.query(models.Users).filter(models.Users.email == user_info.email).first()
+         post_query.update({"password":user_info.new_password}, synchronize_session=False)
+         db.commit()
+         db.refresh(post_query)
+         return post_query 
+
+
+        # stmt = (
+        #     update(models.Users)
+        #     .where(models.Users.email == user_info.email)
+        #     .values(user_info.new_password))
+        # return(stmt)
     

@@ -114,11 +114,9 @@ def delete_post(id: int, db: Session = Depends(database.get_db),current_user:str
 @router.put("/{id}",response_model=schemas.PostResponseUpdate)
 def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user)): #Post is the pydacntic class
     
-    post_query=db.query(models.PostORM).filter(models.PostORM.id == id)#query object, can call an update (bulk)
-    post=post_query.first()# used to check the existence (model instance cannot call an update)
+    post_query=db.query(models.PostORM).filter(models.PostORM.id == id)#query object, can call an .update method (bulk) it does not execute nothing yet
+    post=post_query.first()# Ejecuta la consulta cuando llamas al mtehod.first y devuelve una instancia ORM does not have .update method
     
-    post_query = db.query(models.PostORM).filter(models.PostORM.id == id)
-    post = post_query.first()
     if not post: #First we check the existence
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
