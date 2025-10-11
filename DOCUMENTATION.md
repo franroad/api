@@ -42,6 +42,7 @@
     - [Generating Code and forwarding mail:](#generating-code-and-forwarding-mail)
       - [Forwarding mail](#forwarding-mail)
     - [Endpoint for recieving , validating the code and updating the password](#endpoint-for-recieving--validating-the-code-and-updating-the-password)
+- [12 Vote v1.1.12](#12-vote-v1112)
 
 # 1 Coding CRUD
 
@@ -1088,3 +1089,9 @@ def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(databas
          
          return {"info": "Password updated succesfully! ✅ "}
 ```
+# 12 Vote v1.1.12
+- Users should be able to like a Post
+- Users can only like a post Once
+- Retrieving posts should also fetch the number of likes
+
+- For making sure that an user can only like apost once we will create a new table (votes) with a composed key (users.id and post.id). We make sure that post.id and users.id relationship only exists once per post and user

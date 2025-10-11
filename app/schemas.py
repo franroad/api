@@ -1,6 +1,6 @@
-from pydantic import BaseModel, field_serializer, computed_field, EmailStr,Field,ConfigDict
+from pydantic import BaseModel, field_serializer, computed_field, EmailStr,Field,ConfigDict,NonNegativeInt,conint
 from datetime import datetime
-from fastapi_mail import MessageSchema
+
 
 class Post (BaseModel): # here we use pydantic for define the schema
     title: str
@@ -104,3 +104,8 @@ class UpdatePassword(BaseModel):
     email:EmailStr
     code:int
     new_password:str
+
+
+class Vote(BaseModel):
+    post_id:NonNegativeInt # No permite numeros negativos
+    like:int= Field(ge=0,le=1)#Permite establecer un rango

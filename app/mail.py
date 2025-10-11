@@ -1,6 +1,6 @@
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from . config import settings
-from . import schemas
+
 
 conf = ConnectionConfig(
     MAIL_USERNAME = settings.MAIL_USERNAME,
