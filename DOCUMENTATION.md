@@ -1082,10 +1082,20 @@ def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(databas
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Code expired")
 
     else:
-         hashed_pass=utils.hash_pasword(user_info.new_password)
-         instance_query = db.query(models.Users).filter(models.Users.email == user_info.email)#We create the instance for running the.update
-         instance_query.update({"password":hashed_pass}, synchronize_session=False)
-         db.commit()
+        # Enfoque 1: Actualización directa con update (no devuelve el objeto)
+        # No permite refresh pero no lo necesitamos, no queremos devolver la contraseña (datos sensibles)
+        hashed_pass = utils.hash_password(user_info.new_password)
+        instance_query = db.query(models.Users).filter(models.Users.email == user_info.email)
+        instance_query.update({"password": hashed_pass}, synchronize_session=False)
+        db.commit()
+
+        # Enfoque 2: Actualización mediante la instancia (permite refresh y devolver el objeto)
+        # instance_query = db.query(models.Users).filter(models.Users.email == user_info.email).first()
+        # if instance_query:
+        #     instance_query.password = hashed_pass
+        #     db.commit()
+        #     db.refresh(instance_query)
+        #     return instance_query   # Devuelve el objeto actualizado, pero no queremos devolver la contraseña
          
          return {"info": "Password updated succesfully! ✅ "}
 ```

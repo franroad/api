@@ -65,7 +65,7 @@ class UserResponse (BaseModel):
         # now you can refer to self.email
         return f"User {self.email!r} created successfully" # !r is for obtaining the mail between quotes
    
-class UserResponseGet (BaseModel):
+class UserResponseGet (BaseModel): #Configurado para que no muestre la password
     id: int
     email:str
     created_at: datetime

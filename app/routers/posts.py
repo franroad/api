@@ -113,9 +113,10 @@ def delete_post(id: int, db: Session = Depends(database.get_db),current_user:str
 # GETTING THE ID AND PASSING THE VALUES TO BE UPDATED
 @router.put("/{id}",response_model=schemas.PostResponseUpdate)
 def update_post(id: int, entry: schemas.PostUpdate,db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user)): #Post is the pydacntic class
-    
+    # CONSULTA - tiene método .update() para operaciones masivas
     post_query=db.query(models.PostORM).filter(models.PostORM.id == id)#query object, can call an .update method (bulk) it does not execute nothing yet
-    post=post_query.first()# Ejecuta la consulta cuando llamas al mtehod.first y devuelve una instancia ORM does not have .update method
+    # INSTANCIA ORM - NO tiene .update(), se modifican atributos directamente 
+    post=post_query.first() #nos permite recuperar el objeto
     
     if not post: #First we check the existence
         raise HTTPException(
