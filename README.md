@@ -11,6 +11,7 @@
 - [2. Creating DB for PYTHON/ API / psycopg2 (v1.1.0)](#2-creating-db-for-python-api--psycopg2-v110)
 - [3. USING (ORM) Object relational mapper (v1.1.1)](#3-using-orm-object-relational-mapper-v111)
   - [Installation](#installation)
+- [SQL JOIN COUNT EXAMPLE](#sql-join-count-example)
 
 # API PROJECT
 
@@ -279,3 +280,81 @@ def create_posts(new_post: Post): #function expects new_post param. compliance w
 - We generate a newfile ``database.py`` fo handlong the ddbb connection. 
  
  1. In the ``models.py `` we define a new table for our database
+
+
+# SQL JOIN COUNT EXAMPLE
+
+- ESTA QUERY NOS DEVUELVE LOS PEDIDOS POR CLIENTE
+- COMO ES UN LEFT JOIN Y CX ESTA ALA IZQUIERDA DEL JOIN NOS DEVUELVE TODOS LOS CX TENGAN ORDERS O NO
+- CON EL ``INNER`` SOLO NOS DEVOLVERIAN LOS QUE TIENEN MATCH , ES DECIR LOS QUE TIENEN ORDERS
+```sql
+SELECT
+  Customers.CustomerID,
+  Customers.CustomerName,
+  COUNT(Orders.OrderID) AS orders_per_cx
+FROM Customers
+LEFT JOIN Orders
+  ON Orders.CustomerID = Customers.CustomerID
+GROUP BY
+  Customers.CustomerID,
+  Customers.CustomerName;
+```
+- Los clientes que tengan mas de 1 pedido
+
+``` sql
+SELECT
+  Customers.CustomerID,
+  Customers.CustomerName,
+  COUNT(Orders.OrderID) AS orders_per_cx
+FROM Customers
+LEFT JOIN Orders
+  ON Orders.CustomerID = Customers.CustomerID
+GROUP BY
+  Customers.CustomerID,
+  Customers.CustomerName
+  
+ HAVING COUNT(Orders.OrderID)>1;
+
+
+```
+- Clientes que tengan un pedido con alias
+```sql
+SELECT c.CustomerID, c.CustomerName, COUNT(o.OrderID) AS orders_per_cx
+FROM Customers AS c
+JOIN Orders AS o ON o.CustomerID = c.CustomerID
+GROUP BY c.CustomerID, c.CustomerName;
+
+```
+- Where por fecha:
+``` sql
+SELECT
+  Customers.CustomerID,
+  Customers.CustomerName,
+  COUNT(Orders.OrderID) AS orders_per_cx
+FROM Customers
+JOIN Orders
+  ON Orders.CustomerID = Customers.CustomerID
+WHERE
+  Orders.OrderDate >= '2025-01-01'
+GROUP BY
+  Customers.CustomerID,
+  Customers.CustomerName;
+
+```
+- Contar los votos agrupados por el post_id
+```sql
+Select  COUNT (*) as vote_per_post,post_id
+from vote
+group by post_id
+```
+
+- 3 Tablas inner join
+
+``` sql
+
+Select posts_orm.id, vote.post_id,users.email, COUNT (vote.post_id) as vote_per_post
+from posts_orm
+inner join vote on posts_orm.id=vote.post_id
+inner join users on vote.user_id=users.id
+group by posts_orm.id, vote.post_id,users.email
+```

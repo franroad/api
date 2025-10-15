@@ -43,6 +43,7 @@
       - [Forwarding mail](#forwarding-mail)
     - [Endpoint for recieving , validating the code and updating the password](#endpoint-for-recieving--validating-the-code-and-updating-the-password)
 - [12 Vote try, except v1.1.12](#12-vote-try-except-v1112)
+  - [Querying using joins](#querying-using-joins)
 
 # 1 Coding CRUD
 
@@ -1105,3 +1106,5 @@ def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(databas
 - Retrieving posts should also fetch the number of likes
 - Shemas constraint , pydantic range
 - For making sure that an user can only like apost once we will create a new table (votes) with a composed key (users.id and post.id). We make sure that post.id and users.id relationship only exists once per post and user
+## Querying using joins
+- 
