@@ -20,6 +20,15 @@ def vote(vote_info:schemas.Vote,db: Session = Depends(database.get_db),
             return vote
         except IntegrityError:
             raise HTTPException (status_code=403,detail="Post already liked")
+        
+    if vote_info.like==0:
+        query=db.query(models.Vote).filter(models.Vote.user_id==current_user.id,models.Vote.post_id==vote_info.post_id).first()
+        if not query:
+            raise HTTPException (status_code=404,detail="U havent Liked this post")
+        
+        db.delete(query)
+        db.commit()
+        return {"Info" :"Like removed succesfully"}
 
 
             
