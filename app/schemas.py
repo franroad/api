@@ -105,6 +105,9 @@ class UpdatePassword(BaseModel):
     code:int
     new_password:str
 
+########################################Vote#########################################################
+#Vote
+########################################Vote#########################################################
 
 class Vote(BaseModel):
     post_id:NonNegativeInt # No permite numeros negativos

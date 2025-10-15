@@ -18,8 +18,15 @@ def vote(vote_info:schemas.Vote,db: Session = Depends(database.get_db),
             db.commit()
             db.refresh(vote)# Required if you want to rerurn it.
             return vote
-        except IntegrityError:
+        except IntegrityError as e:
+            pgcode = getattr(e.orig, "pgcode", None)#accede al tributo pgcode 
+            #Error returned by psycopg when the post does not exist  (foreign key violation)
+            if pgcode == "23503":
+                raise HTTPException(status_code=404,detail="Post no longer available")
+            #FALLBACK like having an else
             raise HTTPException (status_code=403,detail="Post already liked")
+
+            
         
     if vote_info.like==0:
         query=db.query(models.Vote).filter(models.Vote.user_id==current_user.id,models.Vote.post_id==vote_info.post_id).first()
