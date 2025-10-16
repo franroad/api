@@ -358,3 +358,19 @@ inner join vote on posts_orm.id=vote.post_id
 inner join users on vote.user_id=users.id
 group by posts_orm.id, vote.post_id,users.email
 ```
+
+- Devuelve los posts mas vodatos:
+
+``` sql
+select posts_orm.title,vote.post_id, count(vote.post_id) as votos_por_post from posts_orm
+inner join vote on posts_orm.id=vote.post_id
+group by posts_orm.title,vote.post_id
+order by votos_por_post desc
+```
+
+- Para ver todos los votos para los posts, incluidos los no voatados
+``` sql
+select posts_orm.id, count (vote.post_id)as vote_per_post from posts_orm --cuenta los vosots por post
+left join vote on vote.post_id=posts_orm.id
+group by posts_orm.id --Agrupa los votos por post (hace que el count cuente los votos por post)
+```
