@@ -1,5 +1,7 @@
 from pydantic import BaseModel, field_serializer, computed_field, EmailStr,Field,ConfigDict,NonNegativeInt,conint
 from datetime import datetime
+from typing import Dict, Any
+
 
 
 class Post (BaseModel): # here we use pydantic for define the schema
@@ -27,7 +29,8 @@ class PostResponse (BaseModel): #This model defines the response that the user w
     id: int
     created_at: datetime
     user_id: int
-    op: OpResponse
+    
+    op: OpResponse # De esta forma lo tenemos nested si no serie op_email,op_created_at
     
     @field_serializer("created_at")
     def format_created_at(self, dt: datetime, _) -> str:
