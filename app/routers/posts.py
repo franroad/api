@@ -32,7 +32,7 @@ def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.g
 
     #return results
 
-#RETIEVE POSTS BASED IN DATE AND SEARCH QUERY
+#RETIEVE POSTS BASED IN DATE AND SEARCH (TITLE) QUERY
 #@router.get("/date",response_model=List[schemas.PostResponse])
 @router.get("/date") #to retrieve all posts list is required
 def get_posts(
@@ -50,7 +50,7 @@ def get_posts(
     if end_dt:
         query = query.where(models.PostORM.created_at <= end_dt)
     
-    posts = query.order_by(models.PostORM.created_at.desc()).filter(models.PostORM.title.contains(search)).all()
+    posts = query.order_by(models.PostORM.created_at.desc()).where(models.PostORM.title.contains(f"%{search}%")).all()
 
     if not posts:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No posts found for the provided paramenters")
