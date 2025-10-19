@@ -3,36 +3,45 @@ from .. import schemas,models,database,oauth
 from  sqlalchemy.orm import Session
 from typing import Optional, List
 from datetime import date, datetime, time
-from sqlalchemy import func
+from sqlalchemy import func,select
+from fastapi.encoders import jsonable_encoder
 
 router= APIRouter(
     prefix="/posts",
     tags=['posts'] # This is mainly for improveing the readability of http://localhost:8000/docs
 )
+
 # RETRIEVE ALL POSTS
 
-@router.get("/",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
-def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user),
-              search:Optional[str] ="",limit:Optional[int]=""):
+#router.get("/",response_model=List[schemas.PostVotes]) #to retrieve all posts list is required
+@router.get("/")
+def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user),search:Optional[str] ="",limit:Optional[int]=10):
     
-    posts=db.query(models.PostORM).filter(models.PostORM.title.contains(search)).limit(limit).all() #models=tables
-    
-    return posts #removing the dict and retunr the stuff  no data keyword
-# @router.get("/",
-#             response_model=List[schemas.PostResponse
-#                                 ]) #to retrieve all posts list is required
-# def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user),search:Optional[str] =""):
-#     posts=db.query(models.PostORM).filter(
-#         models.PostORM.title.contains(search)).all() #models=tables
-#     posts_votes=db.query(
-#         models.PostORM,func.count(models.Vote.post_id)
-#         .label("votes_per_post")).outerjoin(models.Vote, models.Vote.post_id==models.PostORM.id).filter(
-#         models.PostORM.title.contains(search)).group_by(models.PostORM.id).all()
-    
-#     return posts_votes
-    
+    posts=(db.query(models.PostORM).filter(models.PostORM.title.contains(search))
+           .limit(limit).all()) #models=tables
 
-     #removing the dict and retunr the stuff  no data keyword
+    query = (
+    db.query(
+        models.PostORM,(func.count(models.Vote.post_id).label("votes"))
+        
+    )
+    .outerjoin(models.Vote)
+    .group_by(models.PostORM.id)
+     #rESULTS ES UNA LISTA DE TUPLAS cada una contiene postorm y votes
+    )
+
+    results=db.execute(query).mappings().all()
+
+    stmt = (
+    select(models.PostORM, func.count(models.Vote.post_id).label("votes_count"))
+    .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).where(models.PostORM.title.like(f"%{search}%"))
+    .group_by(models.PostORM.id)
+    )
+    rows = db.execute(stmt).mappings().all()  # De esta forma se convierten las tuplas/instancias ORM  a dicts
+    
+    return rows 
+
+    #return results
 
 #RETIEVE POSTS BASED IN DATE AND SEARCH QUERY
 @router.get("/date",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required

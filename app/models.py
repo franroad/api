@@ -17,8 +17,7 @@ class PostORM(Base):
     published=Column(Boolean, server_default='TRUE')
     created_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'))
     user_id=Column(Integer, ForeignKey("users.id", ondelete="CASCADE"),nullable=False) 
-
-    op = relationship ("Users")
+    op = relationship ("Users") #pydantic lee la constraint join de sql alchemy (models.py)
 
 class Users(Base):
     __tablename__="users"
@@ -35,9 +34,8 @@ class Code(Base):
     expires_at=Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
 
 class Vote(Base):
-    __tablename__="vote"
-    user_id=Column(Integer,ForeignKey("users.id",ondelete="CASCADE"), primary_key=True, nullable= False)
-    post_id=Column(Integer,ForeignKey("posts_orm.id",ondelete="CASCADE"),primary_key=True,nullable=False)
+    __tablename__="votes"
+    user_id=Column(Integer,ForeignKey("users.id",ondelete="CASCADE"), primary_key=True)
+    post_id=Column(Integer,ForeignKey("posts_orm.id",ondelete="CASCADE"),primary_key=True)
 
-
-
+    

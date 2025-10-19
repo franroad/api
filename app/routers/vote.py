@@ -22,7 +22,7 @@ def vote(vote_info:schemas.Vote,db: Session = Depends(database.get_db),
             pgcode = getattr(e.orig, "pgcode", None)#accede al tributo pgcode 
             #Error returned by psycopg when the post does not exist  (foreign key violation)
             if pgcode == "23503":
-                raise HTTPException(status_code=404,detail="Post no longer available")
+                raise HTTPException(status_code=404,detail=f"Post with id:{vote_info.post_id!r} no longer available")
             #FALLBACK like having an else
             raise HTTPException (status_code=403,detail="Post already liked")
 
