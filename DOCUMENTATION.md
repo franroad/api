@@ -43,7 +43,7 @@
       - [Forwarding mail](#forwarding-mail)
     - [Endpoint for recieving , validating the code and updating the password](#endpoint-for-recieving--validating-the-code-and-updating-the-password)
 - [12 Vote try, except v1.1.12](#12-vote-try-except-v1112)
-  - [Querying using joins Sql joins](#querying-using-joins-sql-joins)
+  - [Querying  joins Sql joins](#querying--joins-sql-joins)
 
 # 1 Coding CRUD
 
@@ -1106,5 +1106,21 @@ def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(databas
 - Retrieving posts should also fetch the number of likes
 - Shemas constraint , pydantic range
 - For making sure that an user can only like apost once we will create a new table (votes) with a composed key (users.id and post.id). We make sure that post.id and users.id relationship only exists once per post and user
-## Querying using joins Sql joins
-- 
+## Querying  joins Sql joins
+- We have created a composite key , that not allow duplicates
+- We needed to add the .mappings() and execute the query separated if not was retunrning an object non serializable
+  - Example:
+``` Python
+@router.get("/")
+def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user),search:Optional[str] ="",limit:Optional[int]=10):
+    
+
+    stmt = (
+    select(models.PostORM, func.count(models.Vote.post_id).label("votes_count"))
+    .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).where(models.PostORM.title.like(f"%{search}%"))
+    .group_by(models.PostORM.id)
+    )
+    rows = db.execute(stmt).mappings().all()  # De esta forma se convierten las tuplas/instancias ORM  a dicts
+    
+    return rows 
+```

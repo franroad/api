@@ -13,31 +13,20 @@ router= APIRouter(
 
 # RETRIEVE ALL POSTS
 
-#router.get("/",response_model=List[schemas.PostVotes]) #to retrieve all posts list is required
+#@router.get("/",response_model=List[schemas.PostVotes]) #to retrieve all posts list is required
 @router.get("/")
 def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user),search:Optional[str] ="",limit:Optional[int]=10):
     
     posts=(db.query(models.PostORM).filter(models.PostORM.title.contains(search))
            .limit(limit).all()) #models=tables
-
-    query = (
-    db.query(
-        models.PostORM,(func.count(models.Vote.post_id).label("votes"))
-        
-    )
-    .outerjoin(models.Vote)
-    .group_by(models.PostORM.id)
-     #rESULTS ES UNA LISTA DE TUPLAS cada una contiene postorm y votes
-    )
-
-    results=db.execute(query).mappings().all()
+    # Posts with Votes
 
     stmt = (
-    select(models.PostORM, func.count(models.Vote.post_id).label("votes_count"))
+    select(models.PostORM, func.count(models.Vote.post_id).label("Likes"))
     .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).where(models.PostORM.title.like(f"%{search}%"))
     .group_by(models.PostORM.id)
     )
-    rows = db.execute(stmt).mappings().all()  # De esta forma se convierten las tuplas/instancias ORM  a dicts
+    rows = db.execute(stmt).mappings().all()  # De esta forma se convierten las tuplas/instancias ORM  a dicts y podemos hacer el return
     
     return rows 
 
@@ -69,15 +58,26 @@ def get_posts(
     return posts #removing the dict and retunr the stuff  no data keyword
 # RETRIEVE USER POSTS
 
-@router.get("/my-posts",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
-def get_posts(db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user)):
+@router.get("/my-posts",response_model=List[schemas.PostVotes]) #to retrieve all posts list is required
+def get_posts(db: Session = Depends(database.get_db),search:Optional[str]="", current_user:str=Depends(oauth.get_current_user)):
     
     posts = db.query(models.PostORM).filter(models.PostORM.user_id == current_user.id).all() #models=tables
+
+    stmt = (
+    select(models.PostORM, func.count(models.Vote.post_id).label("Likes"))
+    .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).where(models.PostORM.title.like(f"%{search}%"))
+    .group_by(models.PostORM.id)
+    )
+    rows = db.execute(stmt).mappings().all()  # De esta forma se convierten las tuplas/instancias ORM  a dicts y podemos hacer el return
     
-    if not posts:
+    
+    
+    if not rows:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="You have no posts ADD one!.🤩")
+    
+    return rows 
         
-    return posts #removing the dict and retunr the stuff  no data keyword
+    #return posts #removing the dict and retunr the stuff  no data keyword
 
 
 #creating a post WITH PARAMETERIZED query (%s) in case in a future we need to change smthing easier

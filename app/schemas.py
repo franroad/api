@@ -52,8 +52,10 @@ class PostResponse (BaseModel): #This model defines the response that the user w
 
 
 class PostVotes(BaseModel):
-    post:PostResponse
-    votes:int
+    PostORM:PostResponse=Field(serialization_alias='Post🪆')
+    Likes:int=Field(serialization_alias='Likes💯')
+    class Config:
+        orm_mode=True
 
 
 
