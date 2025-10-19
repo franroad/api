@@ -38,8 +38,7 @@ class PostResponse (BaseModel): #This model defines the response that the user w
      created_at: datetime
      user_id: int
      op:OpResponse
-     class Config:
-        orm_mode=True
+     
 
 
      @field_serializer("created_at")
@@ -54,8 +53,7 @@ class PostResponse (BaseModel): #This model defines the response that the user w
 class PostVotes(BaseModel):
     PostORM:PostResponse=Field(serialization_alias='Post🪆')
     Likes:int=Field(serialization_alias='Likes💯')
-    class Config:
-        orm_mode=True
+    
 
 
 

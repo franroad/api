@@ -13,8 +13,8 @@ router= APIRouter(
 
 # RETRIEVE ALL POSTS
 
-#@router.get("/",response_model=List[schemas.PostVotes]) #to retrieve all posts list is required
-@router.get("/")
+@router.get("/",response_model=List[schemas.PostVotes]) #to retrieve all posts list is required
+#@router.get("/")
 def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.get_current_user),search:Optional[str] ="",limit:Optional[int]=10):
     
     posts=(db.query(models.PostORM).filter(models.PostORM.title.contains(search))
@@ -33,7 +33,8 @@ def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.g
     #return results
 
 #RETIEVE POSTS BASED IN DATE AND SEARCH QUERY
-@router.get("/date",response_model=List[schemas.PostResponse]) #to retrieve all posts list is required
+#@router.get("/date",response_model=List[schemas.PostResponse])
+@router.get("/date") #to retrieve all posts list is required
 def get_posts(
     db: Session = Depends(database.get_db),
     user_id:int=Depends(oauth.get_current_user),
@@ -45,9 +46,9 @@ def get_posts(
 
     query = db.query(models.PostORM)
     if start_dt:
-        query = query.filter(models.PostORM.created_at >= start_dt)
+        query = query.where(models.PostORM.created_at >= start_dt)
     if end_dt:
-        query = query.filter(models.PostORM.created_at <= end_dt)
+        query = query.where(models.PostORM.created_at <= end_dt)
     
     posts = query.order_by(models.PostORM.created_at.desc()).filter(models.PostORM.title.contains(search)).all()
 
