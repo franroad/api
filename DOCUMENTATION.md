@@ -44,6 +44,7 @@
     - [Endpoint for recieving , validating the code and updating the password](#endpoint-for-recieving--validating-the-code-and-updating-the-password)
 - [12 Vote try, except v1.1.12](#12-vote-try-except-v1112)
   - [Querying  joins Sql joins](#querying--joins-sql-joins)
+    - [Query example with stmt:](#query-example-with-stmt)
 
 # 1 Coding CRUD
 
@@ -1101,12 +1102,14 @@ def validate_code(user_info:schemas.UpdatePassword,db: Session = Depends(databas
          return {"info": "Password updated succesfully! ✅ "}
 ```
 # 12 Vote try, except v1.1.12
+[vote.py](app/routers/vote.py)
 - Users should be able to like a Post
 - Users can only like a post Once We handle this using the try and except by catching the error trhown by the DDBB thanks to the composite key.
 - Retrieving posts should also fetch the number of likes
 - Shemas constraint , pydantic range
 - For making sure that an user can only like apost once we will create a new table (votes) with a composed key (users.id and post.id). We make sure that post.id and users.id relationship only exists once per post and user
 ## Querying  joins Sql joins
+[posts.py](app/routers/posts.py)
 - We have created a composite key , that not allow duplicates
 - We needed to add the .mappings() and execute the query separated if not was retunrning an object non serializable
   - Example:
@@ -1123,4 +1126,42 @@ def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.g
     rows = db.execute(stmt).mappings().all()  # De esta forma se convierten las tuplas/instancias ORM  a dicts
     
     return rows 
+```
+### Query example with stmt:
+``` Python
+@router.get("/date") #to retrieve all posts list is required
+def get_posts(
+    db: Session = Depends(database.get_db),
+    user_id:int=Depends(oauth.get_current_user),
+    search:Optional[str] ="",
+    day_start:Optional[date]=None,day_end:Optional[date]=None):
+
+    start_dt = datetime.combine(day_start, time.min) if day_start else None   # 2025-09-12 00:00:00
+    end_dt   = datetime.combine(day_end,   time.max) if day_end   else None   # 2025-09-13 23:59:59.999999
+    
+    stmt = (
+    select(models.PostORM, func.count(models.Vote.post_id).label("Likes"))
+    .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).order_by(models.PostORM.created_at.desc()).
+    group_by(models.PostORM.id)
+    )
+
+    if start_dt:
+        stmt = stmt.where(models.PostORM.created_at >= start_dt)
+    if end_dt:
+        stmt = stmt.where(models.PostORM.created_at <= end_dt)
+    
+    if search:
+        stmt=stmt.where(models.PostORM.title.contains(search))#search by title
+
+
+    print(stmt)
+    results=db.execute(stmt).mappings().all()
+    if not results:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No posts found for the provided paramenters")
+
+```
+```sql
+SELECT posts_orm.id, posts_orm.title, posts_orm.content, posts_orm.published, posts_orm.created_at, posts_orm.user_id, count(votes.post_id) AS "Likes"
+FROM posts_orm LEFT OUTER JOIN votes ON votes.post_id = posts_orm.id
+WHERE posts_orm.created_at >= :created_at_1 AND posts_orm.created_at <= :created_at_2 AND (posts_orm.title LIKE '%' || :title_1 || '%') GROUP BY posts_orm.id ORDER BY posts_orm.created_at DESC
 ```

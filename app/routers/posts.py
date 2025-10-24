@@ -23,9 +23,11 @@ def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.g
 
     stmt = (
     select(models.PostORM, func.count(models.Vote.post_id).label("Likes"))
-    .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).where(models.PostORM.title.like(f"%{search}%"))
+    .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id)
     .group_by(models.PostORM.id)
     )
+    if search:
+        stmt=stmt.where(models.PostORM.title.contains(search))
     rows = db.execute(stmt).mappings().all()  # De esta forma se convierten las tuplas/instancias ORM  a dicts y podemos hacer el return
     
     return rows 
@@ -43,12 +45,6 @@ def get_posts(
 
     start_dt = datetime.combine(day_start, time.min) if day_start else None   # 2025-09-12 00:00:00
     end_dt   = datetime.combine(day_end,   time.max) if day_end   else None   # 2025-09-13 23:59:59.999999
-    #The key here is having a basic query and add stuff (.where,... ) if not the original query is lost.
-
-    #query = db.query(models.PostORM)
-    
-    
-    #posts = query.order_by(models.PostORM.created_at.desc()).where(models.PostORM.title.contains(f"%{search}%")).all()
     
     stmt = (
     select(models.PostORM, func.count(models.Vote.post_id).label("Likes"))
@@ -61,7 +57,6 @@ def get_posts(
     if end_dt:
         stmt = stmt.where(models.PostORM.created_at <= end_dt)
     
-   
     if search:
         stmt=stmt.where(models.PostORM.title.contains(search))#search by title
 
