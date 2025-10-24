@@ -39,7 +39,7 @@ def get_posts(db: Session = Depends(database.get_db),user_id:int=Depends(oauth.g
 @router.get("/date") #to retrieve all posts list is required
 def get_posts(
     db: Session = Depends(database.get_db),
-    user_id:int=Depends(oauth.get_current_user),
+   # user_id:int=Depends(oauth.get_current_user),
     search:Optional[str] ="",
     day_start:Optional[date]=None,day_end:Optional[date]=None):
 
