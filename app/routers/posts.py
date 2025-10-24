@@ -71,15 +71,17 @@ def get_posts(
 # RETRIEVE USER POSTS
 
 @router.get("/my-posts",response_model=List[schemas.PostVotes]) #to retrieve all posts list is required
-def get_posts(db: Session = Depends(database.get_db),search:Optional[str]="", current_user:str=Depends(oauth.get_current_user)):
+def get_posts(db: Session = Depends(database.get_db),search:Optional[str]="", current_user:int=Depends(oauth.get_current_user)):
     
-    posts = db.query(models.PostORM).filter(models.PostORM.user_id == current_user.id).all() #models=tables
+    
 
     stmt = (
     select(models.PostORM, func.count(models.Vote.post_id).label("Likes"))
-    .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).where(models.PostORM.title.like(f"%{search}%"))
+    .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).where(models.PostORM.title.contains(search))
     .group_by(models.PostORM.id)
     )
+    print(current_user.id)
+    stmt=stmt.where(models.PostORM.user_id==current_user.id)
     rows = db.execute(stmt).mappings().all()  # De esta forma se convierten las tuplas/instancias ORM  a dicts y podemos hacer el return
     
     
@@ -89,13 +91,6 @@ def get_posts(db: Session = Depends(database.get_db),search:Optional[str]="", cu
     
     return rows 
         
-    #return posts #removing the dict and retunr the stuff  no data keyword
-
-
-#creating a post WITH PARAMETERIZED query (%s) in case in a future we need to change smthing easier
-
-#Additionally, the posts variable here , is a dictionary because we are using RalDictCursor hence to acces the values:
-#Title: {post['title']}
 
 #we still using the pydantic class created above (Post)
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse) #adding the post to a dict and to the my_post array of dict
