@@ -43,20 +43,36 @@ def get_posts(
 
     start_dt = datetime.combine(day_start, time.min) if day_start else None   # 2025-09-12 00:00:00
     end_dt   = datetime.combine(day_end,   time.max) if day_end   else None   # 2025-09-13 23:59:59.999999
+    #The key here is having a basic query and add stuff (.where,... ) if not the original query is lost.
 
-    query = db.query(models.PostORM)
-    if start_dt:
-        query = query.where(models.PostORM.created_at >= start_dt)
-    if end_dt:
-        query = query.where(models.PostORM.created_at <= end_dt)
+    #query = db.query(models.PostORM)
     
-    posts = query.order_by(models.PostORM.created_at.desc()).where(models.PostORM.title.contains(f"%{search}%")).all()
+    
+    #posts = query.order_by(models.PostORM.created_at.desc()).where(models.PostORM.title.contains(f"%{search}%")).all()
+    
+    stmt = (
+    select(models.PostORM, func.count(models.Vote.post_id).label("Likes"))
+    .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).order_by(models.PostORM.created_at.desc()).
+    group_by(models.PostORM.id)
+    )
 
-    if not posts:
+    if start_dt:
+        stmt = stmt.where(models.PostORM.created_at >= start_dt)
+    if end_dt:
+        stmt = stmt.where(models.PostORM.created_at <= end_dt)
+    
+   
+    if search:
+        stmt=stmt.where(models.PostORM.title.contains(search))#search by title
+
+
+    print(stmt)
+    results=db.execute(stmt).mappings().all()
+    if not results:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No posts found for the provided paramenters")
 
     
-    return posts #removing the dict and retunr the stuff  no data keyword
+    return results #removing the dict and retunr the stuff  no data keyword
 # RETRIEVE USER POSTS
 
 @router.get("/my-posts",response_model=List[schemas.PostVotes]) #to retrieve all posts list is required

@@ -12,6 +12,7 @@
 - [3. USING (ORM) Object relational mapper (v1.1.1)](#3-using-orm-object-relational-mapper-v111)
   - [Installation](#installation)
 - [SQL JOIN COUNT EXAMPLE](#sql-join-count-example)
+- [POSMAN VARIABLE](#posman-variable)
 
 # API PROJECT
 
@@ -374,3 +375,12 @@ select posts_orm.id, count (vote.post_id)as vote_per_post from posts_orm --cuent
 left join vote on vote.post_id=posts_orm.id
 group by posts_orm.id --Agrupa los votos por post (hace que el count cuente los votos por post)
 ```
+
+
+# POSMAN VARIABLE
+- Get info from a response and store it in a local variable.
+  - ```javascript
+        pm.environment.set("token",pm.response.json().access_token);
+
+        console.log(pm.environment.get("token"));//for confirming we print it in the console ("VIEW")
+    ```
