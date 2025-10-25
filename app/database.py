@@ -21,7 +21,7 @@ engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)
 
 SessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)
 
-Base = declarative_base()
+Base = declarative_base()#contiene la info(metadata) de nuestros models en memoria , lo usa alembic para comparar con la DDBB
 
 def get_db():
     db=SessionLocal()

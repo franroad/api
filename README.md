@@ -13,6 +13,7 @@
   - [Installation](#installation)
 - [SQL JOIN COUNT EXAMPLE](#sql-join-count-example)
 - [POSMAN VARIABLE](#posman-variable)
+- [utilities:](#utilities)
 
 # API PROJECT
 
@@ -384,3 +385,12 @@ group by posts_orm.id --Agrupa los votos por post (hace que el count cuente los 
 
         console.log(pm.environment.get("token"));//for confirming we print it in the console ("VIEW")
     ```
+
+# utilities:
+- **SQLAlchemy:** ORM  permite usar Python para generar tablas, construir queries y gestionar sesiones y engine para hablar con la base de datos.
+
+- **psycopg2:** driver de PostgreSQL proporciona la comunicacion entre Python y la base de datos que usa SQLAlchemy.
+
+- **Pydantic:** valida, transforma y serializa datos se usa para esquemas de request/response  en FastAPI aplica tipos y formatos.
+
+- **Alembic:** herramienta de migraciones para SQLAlchemy; usa la metadata de los modelos para aplicar cambios  y hacer rollbacks.

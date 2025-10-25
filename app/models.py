@@ -1,5 +1,5 @@
 #every model represnts a table in our ddbb
-from .database import Base
+from .database import Base #variable containing the schemas
 from sqlalchemy import Column, Integer, String, Boolean,ForeignKey
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
