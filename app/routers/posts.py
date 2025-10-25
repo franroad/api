@@ -112,10 +112,10 @@ def create_posts(new_post: schemas.Post, db: Session = Depends(database.get_db),
         
  #retrieving post by id           
 #@router.get("/{id}")       
-@router.get("/{id}",response_model=List[schemas.PostVotes])  # Get post per id (decorator/path parameter)
+@router.get("/{id}",response_model=schemas.PostVotes)  # Get post per id (decorator/path parameter)
 def get_post(id: int, db: Session = Depends(database.get_db)):#performing validation with fast api we are saying I want an integer as input.
    
-    post = db.query(models.PostORM).filter(models.PostORM.id == id).first() #first entrance that matches
+
     stmt = (
     select(models.PostORM, func.count(models.Vote.post_id).label("Likes"))
     .outerjoin(models.Vote, models.Vote.post_id == models.PostORM.id).where(models.PostORM.id==id)
@@ -123,7 +123,7 @@ def get_post(id: int, db: Session = Depends(database.get_db)):#performing valida
     )
     
 
-    result=db.execute(stmt).mappings().all()
+    result=db.execute(stmt).mappings().first()#.first no devuelve una lista
     if result: #in python not empty values are considered as true same as: if post != {} (si no esta vacio... damelo else error)
         return result  # Returns the entire post if found
     else:#if not found
