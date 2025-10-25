@@ -45,6 +45,7 @@
 - [12 Vote try, except v1.1.12](#12-vote-try-except-v1112)
   - [Querying  joins Sql joins](#querying--joins-sql-joins)
     - [Query example with stmt:](#query-example-with-stmt)
+- [13 Get One Post Join](#13-get-one-post-join)
 
 # 1 Coding CRUD
 
@@ -1165,3 +1166,5 @@ SELECT posts_orm.id, posts_orm.title, posts_orm.content, posts_orm.published, po
 FROM posts_orm LEFT OUTER JOIN votes ON votes.post_id = posts_orm.id
 WHERE posts_orm.created_at >= :created_at_1 AND posts_orm.created_at <= :created_at_2 AND (posts_orm.title LIKE '%' || :title_1 || '%') GROUP BY posts_orm.id ORDER BY posts_orm.created_at DESC
 ```
+
+# 13 Get One Post Join
