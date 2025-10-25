@@ -1170,7 +1170,7 @@ WHERE posts_orm.created_at >= :created_at_1 AND posts_orm.created_at <= :created
 # 13 Get One Post Join v1.1.13
 Alembic is a Database migration tool
 ``pip install alembic``
-``alembic init <<directory>>`` [alembic](app/infra/)
+``alembic init <<directory>>`` [alembic](alembic)
 
 - To configure *Alembic* we need to set up the following
   1. import the ```Base`` into alembic [.env](app/infra/alembic/env.py) and set it as *target_metadata*
