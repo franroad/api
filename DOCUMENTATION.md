@@ -1182,3 +1182,4 @@ Alembic is a Database migration tool
  1. Run the following command to create a revision ``alembic revision -m "message"``
  2. Inside the [versions](alembic/versions/) you will find the version generated, configure the upgrade and the "rollback"
  3. once configured run: ``alembic upgrade <<revision_id>>`` and the operation defined in the upgrade will execute.
+ RUN THESE COMMANDS IN THE SAME DIRECTORY WHERE *alembic.ini* is located
