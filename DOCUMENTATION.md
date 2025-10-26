@@ -45,7 +45,8 @@
 - [12 Vote try, except v1.1.12](#12-vote-try-except-v1112)
   - [Querying  joins Sql joins](#querying--joins-sql-joins)
     - [Query example with stmt:](#query-example-with-stmt)
-- [13 Get One Post Join v1.1.13](#13-get-one-post-join-v1113)
+- [13 DDBB Migration (Alembic) v1.1.13](#13-ddbb-migration-alembic-v1113)
+  - [Working with Alembic](#working-with-alembic)
 
 # 1 Coding CRUD
 
@@ -1167,11 +1168,17 @@ FROM posts_orm LEFT OUTER JOIN votes ON votes.post_id = posts_orm.id
 WHERE posts_orm.created_at >= :created_at_1 AND posts_orm.created_at <= :created_at_2 AND (posts_orm.title LIKE '%' || :title_1 || '%') GROUP BY posts_orm.id ORDER BY posts_orm.created_at DESC
 ```
 
-# 13 Get One Post Join v1.1.13
+# 13 DDBB Migration (Alembic) v1.1.13
 Alembic is a Database migration tool
 ``pip install alembic``
 ``alembic init <<directory>>`` [alembic](alembic)
 
 - To configure *Alembic* we need to set up the following
-  1. import the ```Base`` into alembic [.env](app/infra/alembic/env.py) and set it as *target_metadata*
-  2. 
+  1. Import the ```Base`` into alembic [.env](alembic/env.py) and set it as *target_metadata*
+  2. In the same file add the ``config.set_main_option`` parameter , so alembic can pick the *connection-Url* from the env
+  3. Add the corresponding *key-value* pair in the .env and update the Pydantic Class in [config.py](app/config.py).
+   
+ ## Working with Alembic
+ 1. Run the following command to create a revision ``alembic revision -m "message"``
+ 2. Inside the [versions](alembic/versions/) you will find the version generated, configure the upgrade and the "rollback"
+ 3. once configured run: ``alembic upgrade <<revision_id>>`` and the operation defined in the upgrade will execute.
