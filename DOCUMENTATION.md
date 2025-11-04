@@ -1205,8 +1205,12 @@ def downgrade() -> None:
 ```Python
 def upgrade() -> None:
     """Upgrade schema."""
-   op.create_table('posts',sa.Column(id,sa.INTEGER, nullable=False),
-                    promary_key=True), sa.Column('title', sa.STRING,nullable=False)
+   op.create_table('posts',sa.Column('id',sa.INTEGER, nullable=False),
+                    primary_key=True), sa.Column('title', sa.STRING,nullable=False)
+#another example on how to do it
+   op.create_table ('posts', 
+                    sa.column('id', sa.INTEGER, nullable=False),
+                    sa.PrimaryKeyConstraint('id'))
     pass
 
 
