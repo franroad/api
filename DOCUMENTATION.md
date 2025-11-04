@@ -1183,3 +1183,7 @@ Alembic is a Database migration tool
  2. Inside the [versions](alembic/versions/) you will find the version generated, configure the upgrade and the "rollback"
  3. once configured run: ``alembic upgrade <<revision_id>>`` and the operation defined in the upgrade will execute.
  RUN THESE COMMANDS IN THE SAME DIRECTORY WHERE *alembic.ini* is located
+
+*Example*
+1. ``alembic revision -m "add foreign key to  posts table"``
+2. 
