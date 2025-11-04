@@ -1220,3 +1220,6 @@ def downgrade() -> None:
     pass
 
 ```
+Additionally wr can use the following command to create a revision with the cnahges added automatically:
+
+``alembic revision --autogenerate -m "add remaining tables"``

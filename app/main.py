@@ -6,8 +6,8 @@ from .database import engine
 from . import models
 from . routers import users,posts,auth,vote #points to the files whre are the api endpoints
 
-
-models.Base.metadata.create_all(bind=engine)
+# Not needed if using Alembic
+#models.Base.metadata.create_all(bind=engine)
 
 app=FastAPI() #create instance of fastapi
 
