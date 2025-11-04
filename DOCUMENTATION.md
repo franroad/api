@@ -1186,4 +1186,33 @@ Alembic is a Database migration tool
 
 *Example*
 1. ``alembic revision -m "add foreign key to  posts table"``
-2. 
+```Python
+def upgrade() -> None:
+    """Upgrade schema."""
+    op.add_column('posts', sa.Column('owner_id',sa.INTEGER,nullable=False)),
+    op.create_foreign_key('post_users_fk', source_table='posts',referent_table='users',local_cols=['owner_id'],remote_cols=['id'],ondelete='CASCADE')
+    pass
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    op.drop_constraint('post_users_fk', table_name='posts')
+    op.drop_column('posts','owner_id')
+    pass
+
+```
+
+```Python
+def upgrade() -> None:
+    """Upgrade schema."""
+   op.create_table('posts',sa.Column(id,sa.INTEGER, nullable=False),
+                    promary_key=True), sa.Column('title', sa.STRING,nullable=False)
+    pass
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    op.drop_table('posts')
+    pass
+
+```
