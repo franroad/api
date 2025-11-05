@@ -5,11 +5,27 @@ from fastapi import FastAPI #import the library
 from .database import engine
 from . import models
 from . routers import users,posts,auth,vote #points to the files whre are the api endpoints
-
+from fastapi.middleware.cors import CORSMiddleware
 # Not needed if using Alembic
 #models.Base.metadata.create_all(bind=engine)
 
 app=FastAPI() #create instance of fastapi
+
+
+origins = [
+    # "http://localhost.tiangolo.com",
+    # "https://localhost.tiangolo.com",
+    # "http://localhost",
+    # "https://www.bing.com/",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(posts.router) #Includes the routes defined in the files from the import and registers in the main.py
 app.include_router(users.router)

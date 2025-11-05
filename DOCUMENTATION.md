@@ -47,6 +47,8 @@
     - [Query example with stmt:](#query-example-with-stmt)
 - [13 DDBB Migration (Alembic) v1.1.13](#13-ddbb-migration-alembic-v1113)
   - [Working with Alembic](#working-with-alembic)
+- [14 DDBB Migration (Alembic) v1.1.14](#14-ddbb-migration-alembic-v1114)
+  - [Cors](#cors)
 
 # 1 Coding CRUD
 
@@ -1223,3 +1225,21 @@ def downgrade() -> None:
 Additionally wr can use the following command to create a revision with the cnahges added automatically:
 
 ``alembic revision --autogenerate -m "add remaining tables"``
+
+# 14 DDBB Migration (Alembic) v1.1.14
+## Cors 
+[main.py](app/main.py)
+- Allows requests from different origins
+- If not enabled, only request from the same Domain is allowed
+- Test from browser:
+``` Javascript
+fetch("http://localhost:8000/", {
+  method: "GET",
+  mode: "cors"
+})
+  .then(response => response.text())
+  .then(data => console.log("✅ Respuesta:", data))
+  .catch(error => console.error("❌ Error CORS:", error));
+
+
+```
