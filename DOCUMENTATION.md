@@ -47,7 +47,7 @@
     - [Query example with stmt:](#query-example-with-stmt)
 - [13 DDBB Migration (Alembic) v1.1.13](#13-ddbb-migration-alembic-v1113)
   - [Working with Alembic](#working-with-alembic)
-- [14 DDBB Migration (Alembic) v1.1.14](#14-ddbb-migration-alembic-v1114)
+- [14 Cors v1.1.14](#14-cors-v1114)
   - [Cors](#cors)
 
 # 1 Coding CRUD
@@ -1226,7 +1226,7 @@ Additionally wr can use the following command to create a revision with the cnah
 
 ``alembic revision --autogenerate -m "add remaining tables"``
 
-# 14 DDBB Migration (Alembic) v1.1.14
+# 14 Cors v1.1.14
 ## Cors 
 [main.py](app/main.py)
 - Allows requests from different origins

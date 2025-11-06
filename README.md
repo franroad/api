@@ -51,6 +51,7 @@ Example call:
 
 
 # NOTES
+- Getting all poackages installed from requirements ``pip install -r requirements.txt``
 - Iterating to get index and content
 
 ```python
