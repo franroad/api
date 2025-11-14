@@ -47,6 +47,7 @@
     - [Query example with stmt:](#query-example-with-stmt)
 - [13 DDBB Migration (Alembic) v1.1.13](#13-ddbb-migration-alembic-v1113)
   - [Working with Alembic](#working-with-alembic)
+  - [DATABASE MIGRATION EXAMPLE](#database-migration-example)
 - [14 Cors v1.1.14](#14-cors-v1114)
   - [Cors](#cors)
 
@@ -1225,6 +1226,16 @@ def downgrade() -> None:
 Additionally wr can use the following command to create a revision with the cnahges added automatically:
 
 ``alembic revision --autogenerate -m "add remaining tables"``
+
+This command will pick the current state of the DDBB and the models of sql alchemy defined, compare and create the remaining relations and tables that are not created in the ddbb.
+
+## DATABASE MIGRATION EXAMPLE
+- Real case scenario we have run couple of alembic commands in a given host with the postgre setup and now we change of host and we have an empty DDBB (Alembic commands from above).
+- now running the following command we can get the same state that in the ohter host: 
+  - ``alembic upgrade head``
+- **NOTE:** We just have to install alembic, but not alembic init but upgrade head so alembic compares the status and its version (are uploaded in git) and updates the DDBB accordingly.
+
+
 
 # 14 Cors v1.1.14
 ## Cors 
