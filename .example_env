@@ -1,4 +1,11 @@
 # .env (placeholders)
+
+
+DDBB_NAME=api
+DDBB_USER=user
+DDBB_PASSWORD=passwrod
+DDBB_HOSTNAME=backend-DDBB # used for docker-compose and the dns
+DDBB_PORT=5432
 SQLALCHEMY_DATABASE_URL=postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}
 ALEMBIC_DATABASE_URL = postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}
 SECRET_KEY={SECRET_KEY}

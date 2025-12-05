@@ -7,14 +7,16 @@ services:
     env_file: "./.env"
     # environment:
     #   - EXAMPLE_KEY=EXAMPLE_VALUE
+    depends_on:
+      - backend-DDBB
 
   backend-DDBB:
     image: postgres:16-alpine
-    ports:
-      - 5432
     environment:
       - POSTGRES_PASSWORD=user_password
       - POSTGRES_DB=ddbb_name
       - POSTGRES_USER=user
     volumes:
       - postgres-db:/var/lib/postgresql/data # depends on the postgres version
+volumes:
+  postgres-db: # THIS MAKES THE VOLUME ACCESIBLE FOR THE OTHER SERVICES/CONTAINERS

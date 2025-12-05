@@ -1,6 +1,11 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    DDBB_NAME:str
+    DDBB_USER:str
+    DDBB_PASSWORD:int
+    DDBB_HOSTNAME=str
+    DDBB_PORT=int
     SQLALCHEMY_DATABASE_URL:str
     ALEMBIC_DATABASE_URL: str
     SECRET_KEY : str
