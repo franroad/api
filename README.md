@@ -30,7 +30,7 @@
 3. ``source venv1/bin/activate`` // deactivaste // venv1/Scripts/Activate.ps1
     - pip install fastapi[all]// pip install 'fastapi[all]'
 4. Instalar FastApi
-5. levantar el server ``fastapi dev app/main.py``
+5. levantar el server ``fastapi dev app/main.py`` or ``uvicorn app.main:app``
 
 # POSTMAN
 Used in test section for testing purposes but there are no schema.
@@ -51,6 +51,7 @@ Example call:
 
 
 # NOTES
+- Generating the requirements.txt ``pip freeze > requirements.txt``
 - Getting all poackages installed from requirements ``pip install -r requirements.txt``
 - Iterating to get index and content
 

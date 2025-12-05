@@ -1,0 +1,20 @@
+services:
+  api:
+    image: api:v1
+    build: .
+    ports:
+      - 8000:8000
+    env_file: "./.env"
+    # environment:
+    #   - EXAMPLE_KEY=EXAMPLE_VALUE
+
+  backend-DDBB:
+    image: postgres:16-alpine
+    ports:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=user_password
+      - POSTGRES_DB=ddbb_name
+      - POSTGRES_USER=user
+    volumes:
+      - postgres-db:/var/lib/postgresql/data # depends on the postgres version

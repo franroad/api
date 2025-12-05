@@ -5,5 +5,5 @@ __pycache__/
 *.DS_Store
 ../.DS_Store*
 api-crud*
-
+docker-compose.yaml
 .env*

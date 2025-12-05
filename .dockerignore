@@ -1,0 +1,8 @@
+gunicorn.service
+*.md
+IMAGES # folder
+.gitignore
+.git
+*api-crud # this is inside of /app
+docker-compose.yaml
+__pycache__/
