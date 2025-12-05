@@ -49,6 +49,8 @@
   - [Working with Alembic](#working-with-alembic)
 - [14 Cors v1.1.14](#14-cors-v1114)
   - [Cors](#cors)
+- [15 Docker](#15-docker)
+    - [COMMANDS](#commands)
 
 # 1 Coding CRUD
 
@@ -1231,7 +1233,7 @@ Additionally wr can use the following command to create a revision with the cnah
 [main.py](app/main.py)
 - Allows requests from different origins
 - If not enabled, only request from the same Domain is allowed
-- Test from browser:
+- Test from browser in a webpage:
 ``` Javascript
 fetch("http://localhost:8000/", {
   method: "GET",
@@ -1243,3 +1245,32 @@ fetch("http://localhost:8000/", {
 
 
 ```
+# 15 Docker
+- We are going to contenarize out app for that we define the [Dockerfile](.Dockerfile)
+- Take into account the Docker layer optimizaiton
+  - Dokcer treats each instruction as a layer and it caches the result
+  - To take advantege of the caching the steps less prone to change must be the first e.g: requirements.txt (longest step but less prone to change than the code)
+- A minimum change in the code , invalidates the cached layer of ```COPY .. `` and below
+(we are using **docker-compose** instead of using docker build for creating the image)
+1. ``docker build -t api:v1 .``
+   
+- Now that we have the image we can use ``Docker Compose`` to test how the containers will interact (Docker compose used in dev envs), so in our case we will define the **api** conteriner and the **Postgresql** container
+- Each service its a container. With this config we are building the image and executing the container.
+```yaml
+services:
+  api:
+    image: api:v1
+    build: .
+    ports:
+      - 8000:8000
+
+  backend-DDBB:
+    image: postgres:16-alpine
+    ports:
+      - 5432
+    
+```
+### COMMANDS
+- Checking the logs:
+  - docker ps -a
+  - docker logs <container-name>
