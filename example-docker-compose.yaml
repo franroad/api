@@ -12,6 +12,8 @@ services:
 
   backend-DDBB:
     image: postgres:16-alpine
+    ports:
+     - 5432:5432 # If we want to acces from the host using pgadmin
     environment:
       - POSTGRES_PASSWORD=user_password
       - POSTGRES_DB=ddbb_name

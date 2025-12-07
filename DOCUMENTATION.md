@@ -51,6 +51,7 @@
 - [14 Cors v1.1.14](#14-cors-v1114)
   - [Cors](#cors)
 - [15 Docker](#15-docker)
+  - [Updated connection string](#updated-connection-string)
     - [COMMANDS](#commands)
 
 # 1 Coding CRUD
@@ -1264,6 +1265,8 @@ fetch("http://localhost:8000/", {
 - A minimum change in the code , invalidates the cached layer of ```COPY .. `` and below
 (we are using **docker-compose** instead of using docker build for creating the image)
 1. ``docker build -t api:v1 .``
+
+- Docker compose will use the Dockerfile for building the image
    
 - Now that we have the image we can use ``Docker Compose`` to test how the containers will interact (Docker compose used in dev envs), so in our case we will define the **api** conteriner and the **Postgresql** container
 - Each service its a container. With this config we are building the image and executing the container.
@@ -1281,7 +1284,18 @@ services:
       - 5432
     
 ```
+## Updated connection string
+- We were using a unique connetion string : 
+``engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)``
+- We need to update the .env and the config.py file as *localhost* cannot be used because of docker behavior and we need to set the service name of the DDBB in the connection string:
+``engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")``
+
 ### COMMANDS
 - Checking the logs:
   - docker ps -a
   - docker logs <container-name>
+  - docker compose up -d --force-recreate (in case youb need to update the ENV)
+  - docker compose up --build -d (in case you change the code , rebuild image)
+  - docker-compose -f docker-compose.yaml up --build
+  - docker exec -it <container-name> bash
+ 

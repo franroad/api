@@ -1,0 +1,26 @@
+services:
+  api:
+    image: api:v1
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - 8000:8000
+    env_file: ".env"
+    # environment:
+    #   - EXAMPLE_KEY=EXAMPLE_VALUE
+    depends_on: 
+      - backend-DDBB
+
+  backend-DDBB:
+    image: postgres:16-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=${DDBB_PASSWORD} #Picking the info from the continer end
+      - POSTGRES_DB=${DDBB_NAME}
+      - POSTGRES_USER=${DDBB_USER}
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+volumes:
+  postgres-db: # THIS MAKES THE VOLUME ACCESIBLE FOR THE OTHER SERVICES/CONTAINERS
