@@ -1,10 +1,12 @@
 gunicorn.service
 *.md
-IMAGES # folder
+**/IMAGES/
 .gitignore
 .git
-*api-crud # this is inside of /app
+**/api-crud/ # this is inside of /app
 docker-compose.yaml
 example-docker-compose.yaml
 
-__pycache__/
+**/__pycache__/
+*.pyc
+Dockerfile.api
