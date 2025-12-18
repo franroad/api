@@ -53,6 +53,8 @@
 - [15 Docker](#15-docker)
   - [Updated connection string](#updated-connection-string)
     - [COMMANDS](#commands)
+- [16 Kubernetes \&\& Sealed Secrets](#16-kubernetes--sealed-secrets)
+- [17 Testing Pytest](#17-testing-pytest)
 
 # 1 Coding CRUD
 
@@ -1289,7 +1291,7 @@ services:
 ``engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)``
 - We need to update the .env and the config.py file as *localhost* cannot be used because of docker behavior and we need to set the service name of the DDBB in the connection string:
 ``engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")``
-
+- Docker Compose nijects the variables into the postgress by interpolating them.
 ### COMMANDS
 - Checking the logs:
   - docker ps -a
@@ -1299,3 +1301,7 @@ services:
   - docker-compose -f docker-compose.yaml up --build
   - docker exec -it <container-name> bash
  
+# 16 Kubernetes && Sealed Secrets
+
+# 17 Testing Pytest
+
