@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile.api
     ports:
-      - 8000:8000
+      - 8000:8000 #IF EXPOSING EXTERNALLY NOT REQUIRED 8000 IS ENOUGH
     env_file: ".env"
     # environment:
     #   - EXAMPLE_KEY=EXAMPLE_VALUE
@@ -15,9 +15,9 @@ services:
   backend-DDBB:
     image: postgres:16-alpine
     ports:
-      - 5432:5432
+      - 5432:5432 #host_port:container_port
     environment:
-      - POSTGRES_PASSWORD=${DDBB_PASSWORD} #Picking the info from the continer end
+      - POSTGRES_PASSWORD=${DDBB_PASSWORD} #Picking the info from docker-compose
       - POSTGRES_DB=${DDBB_NAME}
       - POSTGRES_USER=${DDBB_USER}
     volumes:
