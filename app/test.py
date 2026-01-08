@@ -1,4 +1,4 @@
 import os
 
-test=os.getenv("test")
-print(test)
+TEMP=os.getenv("TEMP") #IMPRIME UNA VARIABLE DE ENTORNO QUE EXISTE EN EL SISTEMA
+print(TEMP)

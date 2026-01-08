@@ -21,6 +21,6 @@ services:
       - POSTGRES_DB=${DDBB_NAME}
       - POSTGRES_USER=${DDBB_USER}
     volumes:
-      - postgres-db:/var/lib/postgresql/data
+      - postgres-db:/var/lib/postgresql/data #Name and route
 volumes:
   postgres-db: # THIS MAKES THE VOLUME ACCESIBLE FOR THE OTHER SERVICES/CONTAINERS
