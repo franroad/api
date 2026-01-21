@@ -18,8 +18,8 @@ from .config import settings
 # The engine is responsible for managing connections to your PostgreSQL database,
 # including handling the connection pool, executing SQL statements, and managing overall communication with the database.
 
-#engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)
-engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")
+engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)
+#engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")
 
 SessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)
 

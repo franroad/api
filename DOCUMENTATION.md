@@ -1305,3 +1305,13 @@ services:
 
 # 17 Testing Pytest
 
+- Whenever you do change to the code, ideally you have to test all fucntionalities to confirm that nothing is broken.
+- We are going to use ``assert``
+
+```Python
+assert 1==2 #This will throw an error.
+assert 1==1 #This will not throw an error.
+```
+  
+ - ``Pytest`` will look for the tests in the directories (auto-discovery) but the name should be  test_*.py or *_test.py, Thisd also applies to the **test_function** name.
+
