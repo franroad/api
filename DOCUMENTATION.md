@@ -1314,5 +1314,6 @@ assert 1==1 #This will not throw an error.
 ```
   
  - ``Pytest`` will look for the tests in the directories (auto-discovery) but the name should be  test_*.py or *_test.py, Thisd also applies to the **test_function** name.
+ - Command ``pytest -v -s``
   
 
