@@ -11,9 +11,10 @@ def substract(a:int,b:int):
     
     return subs #not required for pytest
 
-class bank_account:
-    def __init__(self,starting_balance=0):
+class bank_account: 
+    def __init__(self,starting_balance=0): #default value in case no value is provided
         self.balance=starting_balance
+        print(self.balance)
     
     def deposit(self,amount):
         self.balance+=amount #el += hace que se guardfe en self.balance la suma
