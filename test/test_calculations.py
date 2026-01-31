@@ -4,6 +4,19 @@
 # print(TEMP)
 import pytest
 from app.calculations import add,substract,bank_account
+#Fixture allows us to initializa a function so we dont need to do it in the function itself (pytest) and runs before the function itself
+@pytest.fixture
+def fix_zero_bank_account():
+    return bank_account(0)
+
+@pytest.fixture
+def fix_bank_account():
+    return bank_account(55)
+
+@pytest.fixture
+def fix_interest_account():
+    #creating bank account with 60
+    return bank_account(60)
 
 @pytest.mark.parametrize("num1, num2, expected",[
     (3,2,5),
@@ -26,11 +39,25 @@ def test_substract():
 
 #Testing clases
 def test_bank_set_initial_balance():
-    result=bank_account(50) #instance the function and send a value for __init__
-    assert result.balance==50 #as we initialize with result , result is self outside the class
+    account=bank_account(50) #instance the function and send a value for __init__
+    assert account.balance==50 #as we initialize with result , result is self outside the class
 def test_bank_default_balance():
-    result=bank_account()
-    assert result.balance==0
+    account=bank_account()
+    assert account.balance==0
+    #assert fix_zero_bank_account.balance==0
+    #assert round(result.balance, 4)==0
+
+def test_add_amount():
+    account=bank_account()
+    account.deposit(5)
+
+def test_interest(fix_interest_account): #Using fixture we don't need to instance the class
+    #result=bank_account(20)
+    #result.interest()
+    fix_interest_account.interest()
+    assert fix_interest_account.balance==90
+
+
 # The same above but with parameters
 @pytest.mark.parametrize("balance1, expected_balance",[
     (50,50),
@@ -38,5 +65,18 @@ def test_bank_default_balance():
 
 ])
 def test_balance_param(balance1,expected_balance):
-    result=bank_account(balance1)
-    assert result.balance==expected_balance
+    account=bank_account(balance1)
+    assert account.balance==expected_balance
+
+# Fixture + Parameters:: 
+
+
+@pytest.mark.parametrize("deposited, expected",[
+    (50,75),
+    (0,0)
+
+])
+def test_bank_account_operation(fix_zero_bank_account,deposited,expected):
+    fix_zero_bank_account.deposit(deposited)
+    fix_zero_bank_account.interest()
+    assert fix_zero_bank_account.balance==expected

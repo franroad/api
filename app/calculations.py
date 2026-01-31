@@ -13,10 +13,15 @@ def substract(a:int,b:int):
 
 class bank_account: 
     def __init__(self,starting_balance=0): #default value in case no value is provided
-        self.balance=starting_balance
+        self.balance=starting_balance # adding atrtibute to "balance" to the object
+        print(f"Initial Amount: "+ str(self.balance)) # se imprime cada vez que se instancia la clase
+    
+    def deposit(self,amount=0):
+        self.balance+=amount #el += hace que se guardfe en self.balance la suma
         print(self.balance)
     
-    def deposit(self,amount):
-        self.balance+=amount #el += hace que se guardfe en self.balance la suma
+    def interest(self):
+        self.balance*=1.5
+        print(self.balance)
         
 
