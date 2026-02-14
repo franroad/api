@@ -1315,7 +1315,9 @@ assert 1==1 #This will not throw an error.
 ```
   
  - ``Pytest`` will look for the tests in the directories (auto-discovery) but the name should be  test_*.py or *_test.py, Thisd also applies to the **test_function** name.
- - Command ``pytest -v -s``
+ - Command ``pytest -v -s`` ``test\test_users.py`` v=verbose s=show output 
+ - Command ``pytest --disable-warnings``
+ - Command ``pytest -x`` x=stops when one test fails.
 
 ## 18 Testing with TestClient
 TestClient is FastApi utility that allows us to perform HTTP request to test our FastApi, API  functions.

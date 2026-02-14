@@ -38,7 +38,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 
-app = FastAPI()
+
 
 app.mount("/ico", StaticFiles(directory="app/ico"), name="ico")
 
