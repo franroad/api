@@ -3,7 +3,7 @@
 # TEMP=os.getenv("TEMP") #IMPRIME UNA VARIABLE DE ENTORNO QUE EXISTE EN EL SISTEMA
 # print(TEMP)
 import pytest
-from app.calculations import add,substract,bank_account
+from app.calculations import add,substract,bank_account,InsuficcientFunds
 #Fixture allows us to initializa a function so we dont need to do it in the function itself (pytest) and runs before the function itself
 @pytest.fixture
 def fix_zero_bank_account():
@@ -88,13 +88,14 @@ def test_bank_account_operation(fix_zero_bank_account,deposited,expected):
 #test Exceptions (raise) Pytest detesct the exception and returns an error
 def test_withdraw():
     account=bank_account(50)
-    account.withdraw(52)
+    account.withdraw(50)
 
 #With the fixture below we are initializing the bank account with 55, the fixture is defined above.
 #This way we can catch provoked exception so it does not count as error for pytest ↓↓↓
 #↓↓↓
 def test_exception_withdraw(fix_bank_account):
-    with pytest.raises(Exception): #With this we are saying ei! this should raise an exception. If so , the test is pased
+#if this raises ↓↓ another Exception than "InsuffieicentFunds should return error"
+    with pytest.raises(InsuficcientFunds): #With this we are saying ei! this should raise the  exception. If no Exception raised , error is counted
         fix_bank_account.withdraw(200)
 
 

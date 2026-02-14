@@ -11,6 +11,10 @@ def substract(a:int,b:int):
     
     return subs #not required for pytest
 
+class InsuficcientFunds(Exception): #We are personalizing the Python exception for the RAISE.
+    pass
+
+
 class bank_account: 
     def __init__(self,starting_balance=0): #default value in case no value is provided
         self.balance=starting_balance # adding atrtibute to "balance" to the object
@@ -23,7 +27,7 @@ class bank_account:
     def withdraw(self,amount):
         if self.balance<amount:
             #print("Not enough cash")
-            raise Exception("Not Enough Cash")
+            raise InsuficcientFunds("Not Enough Cash")
         else:
             self.balance-=amount
 
