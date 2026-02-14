@@ -55,6 +55,7 @@
     - [COMMANDS](#commands)
 - [16 Kubernetes \&\& Sealed Secrets](#16-kubernetes--sealed-secrets)
 - [17 Testing Pytest](#17-testing-pytest)
+  - [18 Testing with TestClient](#18-testing-with-testclient)
 
 # 1 Coding CRUD
 
@@ -1315,5 +1316,8 @@ assert 1==1 #This will not throw an error.
   
  - ``Pytest`` will look for the tests in the directories (auto-discovery) but the name should be  test_*.py or *_test.py, Thisd also applies to the **test_function** name.
  - Command ``pytest -v -s``
+
+## 18 Testing with TestClient
+TestClient is FastApi utility that allows us to perform HTTP request to test our FastApi, API  functions.
   
 

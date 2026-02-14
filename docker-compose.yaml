@@ -3,7 +3,7 @@ services:
     image: api:v1
     build:
       context: .
-      dockerfile: Dockerfile.api
+      dockerfile: Dockerfile.api #Construimos la imagen y la guardamos con el nombre de arriba ↑↑
     ports:
       - 8000:8000 #IF EXPOSING EXTERNALLY NOT REQUIRED 8000 IS ENOUGH
     env_file: ".env"
@@ -13,7 +13,7 @@ services:
       - backend-DDBB
 
   backend-DDBB:
-    image: postgres:16-alpine
+    image: franint/api-repo:postgres-16
     ports:
       - 5432:5432 #host_port:container_port
     environment:

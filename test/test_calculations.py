@@ -97,5 +97,5 @@ def test_exception_withdraw(fix_bank_account):
 #if this raises ↓↓ another Exception than "InsuffieicentFunds should return error"
     with pytest.raises(InsuficcientFunds): #With this we are saying ei! this should raise the  exception. If no Exception raised , error is counted
         fix_bank_account.withdraw(200)
-
+#Is to confirm that the exception that we are rising is the desired one and no other error is raising.
 
