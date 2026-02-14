@@ -51,6 +51,8 @@ def test_add_amount():
     account=bank_account()
     account.deposit(5)
 
+
+
 def test_interest(fix_interest_account): #Using fixture we don't need to instance the class
     #result=bank_account(20)
     #result.interest()
@@ -80,3 +82,19 @@ def test_bank_account_operation(fix_zero_bank_account,deposited,expected):
     fix_zero_bank_account.deposit(deposited)
     fix_zero_bank_account.interest()
     assert fix_zero_bank_account.balance==expected
+
+
+
+#test Exceptions (raise) Pytest detesct the exception and returns an error
+def test_withdraw():
+    account=bank_account(50)
+    account.withdraw(52)
+
+#With the fixture below we are initializing the bank account with 55, the fixture is defined above.
+#This way we can catch provoked exception so it does not count as error for pytest ↓↓↓
+#↓↓↓
+def test_exception_withdraw(fix_bank_account):
+    with pytest.raises(Exception): #With this we are saying ei! this should raise an exception. If so , the test is pased
+        fix_bank_account.withdraw(200)
+
+

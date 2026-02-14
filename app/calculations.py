@@ -19,6 +19,17 @@ class bank_account:
     def deposit(self,amount=0):
         self.balance+=amount #el += hace que se guardfe en self.balance la suma
         print(self.balance)
+
+    def withdraw(self,amount):
+        if self.balance<amount:
+            #print("Not enough cash")
+            raise Exception("Not Enough Cash")
+        else:
+            self.balance-=amount
+
+            print(f"New balance: {self.balance}")
+
+    
     
     def interest(self):
         self.balance*=1.5
