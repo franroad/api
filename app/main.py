@@ -6,6 +6,8 @@ from .database import engine
 from . import models
 from . routers import users,posts,auth,vote #points to the files whre are the api endpoints
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 # Not needed if using Alembic
 #models.Base.metadata.create_all(bind=engine)
 
@@ -32,6 +34,17 @@ app.include_router(users.router)
 app.include_router(auth.router)
 app.include_router(vote.router)
 
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
+
+app = FastAPI()
+
+app.mount("/ico", StaticFiles(directory="app/ico"), name="ico")
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return RedirectResponse("/ico/master_chief.ico")
 
 
 @app.get("/")#the route where to find the stuff /fran would be: http://127.0.0.1:8000/fran (decorator , endpoint)
