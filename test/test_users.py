@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from app.main import app
+from app import schemas
 
 client = TestClient(app)
 
@@ -13,4 +14,9 @@ def test_hello_main():
 def test_create_user():
     response=client.post("user/add",json={"email":"test_user@pytest.com","password":"1231"}) # sending data in the body, we pass a dictionary
     assert response.status_code==201
+    #assert response.json().get("email")=="test_user@pytest.com"
+    #validating the response using response schema:
+    new_user=schemas.UserResponse(**response.json())
+    assert new_user.email=="test_user@pytest.com"
+    
     print(response,response.json())
