@@ -17,7 +17,7 @@ services:
     ports:
       - 5432:5432 #host_port:container_port
     environment:
-      - POSTGRES_PASSWORD=${DDBB_PASSWORD} #Docker-compose injects the variables into the env
+      - POSTGRES_PASSWORD=${DDBB_PASSWORD} #Docker-compose injects the variables into the env from the .env
       - POSTGRES_DB=${DDBB_NAME}
       - POSTGRES_USER=${DDBB_USER}
     volumes:

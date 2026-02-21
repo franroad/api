@@ -1323,3 +1323,11 @@ assert 1==1 #This will not throw an error.
 TestClient is FastApi utility that allows us to perform HTTP request to test our FastApi, API  functions.
   
 
+- We need to create a new database specific for testing so the tests do not interfere with the data of the database.
+  - To do that we are gonna configure a test db database in [test_users.py](test/test_users.py)
+  - This is based in the override functionality offered by fastapi. ``app.dependency_overrides[get_db]=test_get_db``
+  - Additionally we have to update the DATABASE connection stirng to point to the new database.
+    - The new database does not have the tables so we can use alembic by:
+      - Update the url(point it to the new database) and run ``alembic upgrade head``
+    -  
+  
