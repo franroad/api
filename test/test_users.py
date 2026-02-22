@@ -9,6 +9,9 @@ from app.main import app
 from app import schemas
 from app.config import settings
 from app.database import get_db
+import pytest
+from app.database import Base
+from sqlalchemy import inspect
 
 #engine = create_engine (settings.SQLALCHEMY_DATABASE_URL)
 engine = create_engine(f'{settings.SQLALCHEMY_DATABASE_URL}_test')
@@ -16,7 +19,8 @@ engine = create_engine(f'{settings.SQLALCHEMY_DATABASE_URL}_test')
 
 TestingSessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)
 
-Base = declarative_base()#contiene la info(metadata) de nuestros models en memoria , lo usa alembic para comparar con la DDBB
+Base.metadata.create_all(bind=engine)
+
 
 def get_db_test():
     db=TestingSessionLocal()
@@ -28,13 +32,8 @@ def get_db_test():
 app.dependency_overrides[get_db]=get_db_test
 
 
-
-
-
-
-
-
 client = TestClient(app)
+
 
 #Test the hello world
 def test_hello_main():
@@ -42,6 +41,8 @@ def test_hello_main():
     assert response.status_code == 200
     assert response.json() == {"message": "Hello World 😬"}
     print(response, response.json()) # print(response, response.json().get("message"))
+
+
 
 def test_create_user():
     response=client.post("user/add",json={"email":"test_user@pytest.com","password":"1231"}) # sending data in the body, we pass a dictionary

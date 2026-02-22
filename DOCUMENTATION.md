@@ -56,6 +56,7 @@
 - [16 Kubernetes \&\& Sealed Secrets](#16-kubernetes--sealed-secrets)
 - [17 Testing Pytest](#17-testing-pytest)
   - [18 Testing with TestClient](#18-testing-with-testclient)
+    - [Using sixture to clear database](#using-sixture-to-clear-database)
 
 # 1 Coding CRUD
 
@@ -1329,5 +1330,9 @@ TestClient is FastApi utility that allows us to perform HTTP request to test our
   - Additionally we have to update the DATABASE connection stirng to point to the new database.
     - The new database does not have the tables so we can use alembic by:
       - Update the url(point it to the new database) and run ``alembic upgrade head``
-    -  
+### Using sixture to clear database
+**Fixture**(pytest) are functions that execute before the code itselft , so now we are going to use them to clear the test database before testing , so there are no errors regarding duplicated values.
+
+
+
   
