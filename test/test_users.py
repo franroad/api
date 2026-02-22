@@ -1,3 +1,6 @@
+#THIS SECTION IS EXECUTED BY RUNING PYTEST COMMAND
+#BY LEVERAGING THE OVERRIDE DATABASE
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -15,14 +18,14 @@ TestingSessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)
 
 Base = declarative_base()#contiene la info(metadata) de nuestros models en memoria , lo usa alembic para comparar con la DDBB
 
-def test_get_db():
+def get_db_test():
     db=TestingSessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-app.dependency_overrides[get_db]=test_get_db
+app.dependency_overrides[get_db]=get_db_test
 
 
 
