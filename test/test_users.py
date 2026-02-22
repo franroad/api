@@ -45,10 +45,13 @@ def test_hello_main():
 
 def test_create_user():
     response=client.post("user/add",json={"email":"test_user@pytest.com","password":"1231"}) # sending data in the body, we pass a dictionary
+    if response.status_code !=201:
+        print(f"status code: {response.status_code}, detail: {response.json().get('detail')}")
+    
     assert response.status_code==201
     #assert response.json().get("email")=="test_user@pytest.com"
     #validating the response using response schema:
     new_user=schemas.UserResponse(**response.json())
     assert new_user.email=="test_user@pytest.com"
     
-    print(response,response.json())
+    print(response, response.json())

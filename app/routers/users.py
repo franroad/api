@@ -21,13 +21,13 @@ def create_user(new_user: schemas.Useradd, db: Session = Depends(database.get_db
     #Updating the value for the password withthe return of the fucniton.
     new_user.password=utils.hash_pasword(new_user.password) #we are calling and sending the info to the funciton
     
-    try: #prueba el codeigo
-        user=models.Users(**new_user.dict())# This way we unpack the dictionary and put it in the same format the line above automatically
+    try: #prueba el codigo
+        user=models.Users(**new_user.model_dump())# This way we unpack the dictionary and put it in the same format the line above automatically
         db.add(user)
         db.commit()
         db.refresh(user)
     except:# si salta error haz esto
-        raise HTTPException(status_code=422, detail="User already exists")
+        raise HTTPException(status_code=409, detail="User already exists")
     else:  #si no hay error haz el return              
         
         return user
