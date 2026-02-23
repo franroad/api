@@ -29,7 +29,7 @@ def create_access_token(data: dict):
 def verify_access_token(user_token:str,credentials_exception):
     try:
         
-        payload = jwt.decode(user_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(user_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])# JWT Valida token
 
         id=payload.get("user_id") #Here we are geting the payload we have configured (the id)
         

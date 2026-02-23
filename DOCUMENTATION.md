@@ -1342,6 +1342,7 @@ TestClient is FastApi utility that allows us to perform HTTP request to test our
  - Ideally , each test should be able to run independently, so  we update the solution above to create a new fixture that inserts a test user. [test_users.py](test/test_users.py)
 
 #### Validating the Token
+We deconde the token and validate if the token has the payload.
 
 
 
