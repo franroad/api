@@ -1338,7 +1338,7 @@ TestClient is FastApi utility that allows us to perform HTTP request to test our
  ```Python
  @pytest.fixture(scope="module")
  ```
- - Ideally , each test should be able to run independently, so the solution above its not pretty good.
+ - Ideally , each test should be able to run independently, so  we update the solution above to create a new fixture that inserts a test user. [test_users.py](test/test_users.py) 
 
 
 

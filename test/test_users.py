@@ -9,6 +9,7 @@ def generate_user(client):
     new_data={"email":"test_user@fixture.com","password":"1231"} # This is a DICT
     response=client.post("user/add",json=(new_data))
     new_user=response.json() # This response is also a dict
+    new_user['password']=new_data['password'] #Estamos haciendo un append anadiendo una key "password"
     return new_user
 
 #With the fixture config we can access to the client(HTTP) but also to the DDBB (get_db_test)
@@ -38,17 +39,11 @@ def test_create_user(client):
 
 # The fixtures run here (before each test)
 
-# def test_user_login(client):
-#     response=client.post("/auth",data={"username": "test_user@pytest.com", "password": "1231"})
-#     token=schemas.Token(**response.json())
-#     assert response.status_code==200
-#     assert token.access_token is not None
-
 
 def test_user_login(client,generate_user):
     response=client.post("/auth",data={"username": "test_user@fixture.com", "password": "1231"})
     token=schemas.Token(**response.json())
-    print(generate_user['email'])
+    print(f"info: {generate_user['email'],generate_user['password']}")
     assert response.status_code==200
     assert token.access_token is not None
 
