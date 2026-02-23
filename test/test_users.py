@@ -7,13 +7,14 @@ from .database import db_test
 #With the fixture config we can access to the client(HTTP) but also to the DDBB (get_db_test)
 
 #Test the hello world
+# The fixtures run here (before each test)
 def test_hello_main(client): #El valor que produce el yield de esta fixture se pasa como argumento al test.
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"message": "Hello World 😬"}
     print(response, response.json()) # print(response, response.json().get("message"))
 
-
+# The fixtures run here (before each test)
 
 def test_create_user(client):
     response=client.post("user/add",json={"email":"test_user@pytest.com","password":"1231"}) # sending data in the body, we pass a dictionary
@@ -27,5 +28,16 @@ def test_create_user(client):
     assert new_user.email=="test_user@pytest.com"
     
     print(response, response.json())
+
+# The fixtures run here (before each test)
+
+def test_user_login(client):
+    response=client.post("/auth",data={"username": "test_user@pytest.com", "password": "1231"})
+    token=schemas.Token(**response.json())
+    assert response.status_code==200
+    assert token.access_token is not None
+
+
+    
 
 

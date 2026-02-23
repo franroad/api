@@ -57,6 +57,7 @@
 - [17 Testing Pytest](#17-testing-pytest)
   - [18 Testing with TestClient](#18-testing-with-testclient)
     - [Using Fixture to clear database](#using-fixture-to-clear-database)
+      - [Fixture scope](#fixture-scope)
 
 # 1 Coding CRUD
 
@@ -1332,7 +1333,12 @@ TestClient is FastApi utility that allows us to perform HTTP request to test our
       - Update the url(point it to the new database) and run ``alembic upgrade head``
 ### Using Fixture to clear database
 **Fixture**(pytest) are functions that execute before the code itselft , so now we are going to use them to clear the test database before testing , so there are no errors regarding duplicated values.
-
+#### Fixture scope
+ By default each Fixture will run before each test *function* . This means that the login user funciton for example will not have a valid user to test the login because of the **drop_all** config , hence we need to change the fixture scope so its executed at module level or session but not before each **test**
+ ```Python
+ @pytest.fixture(scope="module")
+ ```
+ - Ideally , each test should be able to run independently, so the solution above its not pretty good.
 
 
 

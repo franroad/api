@@ -23,7 +23,7 @@ TestingSessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)#
 
 # With the fixture config we can access to the client(HTTP) but also to the DDBB (get_db_test)
 # Fixture que prepara una base de datos limpia para cada test y crea la conexion
-@pytest.fixture
+@pytest.fixture(scope="module")
 def db_test(): 
     # Elimina todas las tablas del motor de pruebas
     Base.metadata.drop_all(bind=engine)
