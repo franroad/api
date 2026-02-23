@@ -58,6 +58,7 @@
   - [18 Testing with TestClient](#18-testing-with-testclient)
     - [Using Fixture to clear database](#using-fixture-to-clear-database)
       - [Fixture scope](#fixture-scope)
+      - [Validating the Token](#validating-the-token)
 
 # 1 Coding CRUD
 
@@ -1338,7 +1339,10 @@ TestClient is FastApi utility that allows us to perform HTTP request to test our
  ```Python
  @pytest.fixture(scope="module")
  ```
- - Ideally , each test should be able to run independently, so  we update the solution above to create a new fixture that inserts a test user. [test_users.py](test/test_users.py) 
+ - Ideally , each test should be able to run independently, so  we update the solution above to create a new fixture that inserts a test user. [test_users.py](test/test_users.py)
+
+#### Validating the Token
+
 
 
 

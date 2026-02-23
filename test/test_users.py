@@ -1,9 +1,9 @@
 from app import schemas
+from app.config import settings
 from .database import client
 from .database import db_test
-import pytest
+import pytest,jwt
 
-    
 @pytest.fixture
 def generate_user(client):
     new_data={"email":"test_user@fixture.com","password":"1231"} # This is a DICT
@@ -45,7 +45,13 @@ def test_user_login(client,generate_user):
     token=schemas.Token(**response.json())
     print(f"info: {generate_user['email'],generate_user['password']}")
     assert response.status_code==200
-    assert token.access_token is not None
+    # Validate the Token
+    payload = jwt.decode(token.access_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+
+    id=payload.get("user_id")
+    print(f"user_id: {id}")
+    assert id is not None
+
 
 
 
