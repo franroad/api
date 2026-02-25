@@ -1,16 +1,8 @@
 from app import schemas
 from app.config import settings
-from .database import client
-from .database import db_test
-import pytest,jwt
+import pytest, jwt
 
-@pytest.fixture
-def generate_user(client):
-    new_data={"email":"test_user@fixture.com","password":"1231"} # This is a DICT
-    response=client.post("user/add",json=(new_data))
-    new_user=response.json() # This response is also a dict
-    new_user['password']=new_data['password'] #Estamos haciendo un append anadiendo una key "password"
-    return new_user
+
 
 #With the fixture config we can access to the client(HTTP) but also to the DDBB (get_db_test)
 
@@ -39,7 +31,6 @@ def test_create_user(client):
 
 # The fixtures run here (before each test)
 
-
 def test_user_login(client,generate_user):
     response=client.post("/auth",data={"username": "test_user@fixture.com", "password": "1231"})
     token=schemas.Token(**response.json())
@@ -51,6 +42,16 @@ def test_user_login(client,generate_user):
     id=payload.get("user_id")
     print(f"user_id: {id}")
     assert id is not None
+
+
+@pytest.mark.parametrize("balance1, expected_balance",[
+    (50,50),
+    (0,0)
+])
+
+def test_incorrect_login(client):
+    response=client.post("/auth",data={"username":"incorrect_user@test.com","password":"wrong_password"}) #oatuh should be sent as data
+    assert response.status_code==403
 
 
 
