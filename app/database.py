@@ -20,7 +20,7 @@ from .config import settings
 
 engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)#Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
 
-#engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")
+#this is for docker #engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")
 
 SessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)#Asocia motor y sesion , permite crear sesiones usando el motor.
 
