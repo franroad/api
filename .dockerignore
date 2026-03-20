@@ -10,3 +10,6 @@ example-docker-compose.yaml
 **/__pycache__/
 *.pyc
 Dockerfile.api
+**/.pytest_cache/
+**/test/
+test/
