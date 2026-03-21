@@ -44,14 +44,17 @@ def test_user_login(client,generate_user):
     assert id is not None
 
 
-@pytest.mark.parametrize("incorrect_username, incorrect_password",[
-    ("roberto.carlos@gmail.com","1231"),
-    ("test_user@fixture.com","1234")
+@pytest.mark.parametrize("data,status_code",[
+    ({"username":"roberto.carlos@gmail.com","password":"1231"},403),
+    ({"username":"test_user@fixture.com","password":"1234"},403),
+    ({"username":"test_user@fixture.com"}, 422),
+    ({"password":"1234"},422)
+
 ])
 
-def test_incorrect_login(client,incorrect_username, incorrect_password):
-    response=client.post("/auth",data={"username":incorrect_username,"password":incorrect_password}) #oatuh should be sent as data
-    assert response.status_code==403
+def test_incorrect_login(client,data,status_code):
+    response=client.post("/auth",data=data) #oatuh should be sent as data
+    assert response.status_code==status_code
 
 
 
