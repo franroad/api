@@ -1272,7 +1272,7 @@ fetch("http://localhost:8000/", {
 (we are using **docker-compose** instead of using docker build for creating the image)
 1. ``docker build -t api:v1 .``
 
-- Docker compose will use the Dockerfile for building the image
+- Docker compose will use the Dockerfile for building the image , but first will check if that image exist locally
    
 - Now that we have the image we can use ``Docker Compose`` to test how the containers will interact (Docker compose used in dev envs), so in our case we will define the **api** conteriner and the **Postgresql** container
 - Each service its a container. With this config we are building the image and executing the container.
