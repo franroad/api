@@ -31,10 +31,11 @@ def test_create_user(client):
 
 # The fixtures run here (before each test)
 
-def test_user_login(client,generate_user):
-    response=client.post("/auth",data={"username": "test_user@fixture.com", "password": "1231"})
+def test_user_login(client,generate_user):# CALLS GENERATE USER AND WE GET THE RETURN
+    response=client.post("/auth",data={"username": generate_user['email'], "password": generate_user['password']})
+    print (f"TEST_USER_LOGIN:  {response.json()}")
     token=schemas.Token(**response.json())
-    print(f"info: {generate_user['email'],generate_user['password']}")
+    #print(f"info: {generate_user['email'],generate_user['password']}")
     assert response.status_code==200
     # Validate the Token
     payload = jwt.decode(token.access_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
@@ -42,6 +43,8 @@ def test_user_login(client,generate_user):
     id=payload.get("user_id")
     print(f"user_id: {id}")
     assert id is not None
+    
+
 
 
 @pytest.mark.parametrize("data,status_code",[

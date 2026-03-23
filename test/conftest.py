@@ -17,6 +17,8 @@ from alembic import command
 from app import schemas
 from app.config import settings
 import jwt
+from app.oauth import create_access_token
+from test.test_users import test_user_login
 
 #engine = create_engine (settings.SQLALCHEMY_DATABASE_URL)
 engine = create_engine(f'{settings.SQLALCHEMY_DATABASE_URL}_test') #Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
@@ -80,5 +82,40 @@ def generate_user(client):
     new_data={"email":"test_user@fixture.com","password":"1231"} # This is a DICT
     response=client.post("user/add",json=(new_data))
     new_user=response.json() # This response is also a dict
+    print (f"USER_ADD:  {response.json()}")
     new_user['password']=new_data['password'] #Estamos haciendo un append anadiendo una key "password"
-    return new_user
+    return new_user #as we are not using pydantic
+                    # this is returning everything but not the id
+
+
+
+@pytest.fixture
+def fixture_login(client, generate_user):
+    response=client.post("/auth",data={"username": generate_user['email'], "password": generate_user['password']})
+    
+    token=schemas.Token(**response.json())
+    #print(f"info: {generate_user['email'],generate_user['password']}")
+    assert response.status_code==200
+    # Validate the Token
+    payload = jwt.decode(token.access_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    id=payload.get("user_id")
+    
+    print(f"Fixture user_id: {id}")
+    return id
+    
+
+
+#Create "Fake access token"
+@pytest.fixture
+def test_token(fixture_login): #we can use any id int as is not validated 
+    return create_access_token({"user_id":77})
+
+#We only need to add the token for the protected routes as in posman
+@pytest.fixture
+def authorized_client(client,test_token):
+    client.headers={
+        **client.headers,
+        "Authorization": f"Bearer {test_token}"
+    }
+    
+    return client

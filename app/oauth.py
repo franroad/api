@@ -52,6 +52,14 @@ def get_current_user(user_token: str= Depends(oauth2_scheme),db: Session = Depen
     credentials_exception=HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Could not validte the Credentials", headers={"WWW-Authenticate": "Bearer"})
     user_id=verify_access_token(user_token,credentials_exception) # Returns decoded Token
     user=db.query(models.Users).filter(models.Users.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User does not exist",
+            headers={"WWW-Authenticate": "Bearer"}
+        ) #validamos que el usuario existe y que no pueda funcionar con un id random
+        # como hemos visto en conftest test_token
+        # Sin Esta validacion se genra un token valido criptograficamente pero con un id random
     
     return user
         
