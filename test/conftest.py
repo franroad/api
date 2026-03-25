@@ -108,7 +108,7 @@ def fixture_login(client, generate_user):
 #Create "Fake access token"
 @pytest.fixture
 def test_token(fixture_login): #we can use any id int as is not validated 
-    return create_access_token({"user_id":77})
+    return create_access_token({"user_id":fixture_login})
 
 #We only need to add the token for the protected routes as in posman
 @pytest.fixture
@@ -119,3 +119,7 @@ def authorized_client(client,test_token):
     }
     
     return client
+
+# useful for voting and update post amongt others
+@pytest.fixture
+def test_create_post
