@@ -101,7 +101,7 @@ def fixture_login(client, generate_user):
     id=payload.get("user_id")
     
     print(f"Fixture user_id: {id}")
-    return id
+    return id # with an existing id , we can create the token below:
     
 
 
