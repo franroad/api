@@ -23,7 +23,33 @@ class Settings(BaseSettings):
         env_file= ".env"
 
 
+class TestSettings(BaseSettings):
+
+    
+        DDBB_NAME : str
+        DDBB_USER : str
+        DDBB_PASSWORD : int
+        DDBB_HOSTNAME : str
+        DDBB_PORT : int
+        DDBB_PORT_HOST:int
+        #SQLALCHEMY_DATABASE_URL : str
+        #ALEMBIC_DATABASE_URL: str
+        SECRET_KEY : str
+        ALGORITHM : str
+        ACCESS_TOKEN_EXPIRE_MINUTES : int
+        MAIL_USERNAME : str
+        MAIL_PASSWORD : str
+        MAIL_FROM : str
+        MAIL_PORT : str
+        MAIL_SERVER : str
+        MAIL_STARTTLS:str
+        MAIL_SSL_TLS:str
+        
+        class Config:
+            env_file= ".env.test"
 
 settings=Settings()
+
+settings_test=TestSettings()
 
 

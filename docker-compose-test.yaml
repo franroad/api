@@ -1,0 +1,26 @@
+services:
+  api:
+    image: franint/api-repo:test-version
+    build:
+      context: .
+      dockerfile: Dockerfile.api #Construimos la imagen y la guardamos con el nombre de arriba ↑↑
+    ports:
+      - 8000:8000 #IF EXPOSING EXTERNALLY NOT REQUIRED 8000 IS ENOUGH
+    env_file: ".env.test"
+    # environment:
+    #   - EXAMPLE_KEY=EXAMPLE_VALUE
+    depends_on: 
+      - backend-DDBB
+
+  backend-DDBB:
+    image: franint/api-repo:postgres-16
+    ports:
+      - 5433:5432 #host_port:container_port # le asignamos el 5433 para que no interfiera con el postgres local
+    environment:
+      - POSTGRES_PASSWORD=${DDBB_PASSWORD} #Docker-compose injects the variables into the env from the .env
+      - POSTGRES_DB=${DDBB_NAME} #Only for the first time that the container is executed
+      - POSTGRES_USER=${DDBB_USER}
+    volumes:
+      - postgres-db:/var/lib/postgresql/data #Name and route
+volumes:
+  postgres-db: # THIS MAKES THE VOLUME ACCESIBLE FOR THE OTHER SERVICES/CONTAINERS

@@ -13,3 +13,4 @@ Dockerfile.api
 **/.pytest_cache/
 **/test/
 test/
+is-ready-script.sh

@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # WILL COPY THE WHOLE DIRECTORY INSIDE THE WORKDIR  WE NEED .dockerignore
 COPY . .
 
+#WE ARE ASKING DOCKER TO RUN THE SCRIPT USING SH
 CMD [ "sh", "./api-startup-sh.sh" ]
 
 # Fine if we only have one command

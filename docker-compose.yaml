@@ -18,7 +18,7 @@ services:
       - 5433:5432 #host_port:container_port # le asignamos el 5433 para que no interfiera con el postgres local
     environment:
       - POSTGRES_PASSWORD=${DDBB_PASSWORD} #Docker-compose injects the variables into the env from the .env
-      - POSTGRES_DB=${DDBB_NAME}
+      - POSTGRES_DB=${DDBB_NAME} #Only for the first time that the container is executed
       - POSTGRES_USER=${DDBB_USER}
     volumes:
       - postgres-db:/var/lib/postgresql/data #Name and route

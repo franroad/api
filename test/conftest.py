@@ -8,21 +8,21 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.main import app
-from app.config import settings
+from app.config import settings,settings_test
 from app.database import get_db
 import pytest
 from app.database import Base
 from sqlalchemy import inspect
 from alembic import command
 from app import schemas
-from app.config import settings
 import jwt
 from app.oauth import create_access_token
 from test.test_users import test_user_login
 
 #engine = create_engine (settings.SQLALCHEMY_DATABASE_URL)
-engine = create_engine(f'{settings.SQLALCHEMY_DATABASE_URL}_test') #Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
-#engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")
+# engine = create_engine(f'{settings.SQLALCHEMY_DATABASE_URL}_test') #Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
+engine =create_engine( f"postgresql+psycopg2://{settings_test.DDBB_USER}:{settings_test.DDBB_PASSWORD}@localhost:{settings_test.DDBB_PORT_HOST}/{settings_test.DDBB_NAME}")
+
 
 TestingSessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)#(SessionFactory)Asocia motor y sesion , permite crear sesiones usando el motor.
 
@@ -121,5 +121,5 @@ def authorized_client(client,test_token):
     return client
 
 # useful for voting and update post amongt others
-@pytest.fixture
-def test_create_post
+# @pytest.fixture
+# def test_create_post

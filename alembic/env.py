@@ -3,14 +3,16 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from app.models import Base
-from app.config import settings
+from app.config import settings,settings_test
 from alembic import context
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 #config.set_main_option("sqlalchemy.url",f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")
-config.set_main_option("sqlalchemy.url",f"{settings.ALEMBIC_DATABASE_URL}_test")
+#config.set_main_option("sqlalchemy.url",f"{settings.ALEMBIC_DATABASE_URL}")
+config.set_main_option("sqlalchemy.url",f"postgresql+psycopg2://{settings_test.DDBB_USER}:{settings_test.DDBB_PASSWORD}@{settings_test.DDBB_HOSTNAME}:{settings_test.DDBB_PORT}/{settings_test.DDBB_NAME}")
+#docker_test
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

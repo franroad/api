@@ -25,9 +25,11 @@ def test_create_user(client):
     #assert response.json().get("email")=="test_user@pytest.com"
     #validating the response using response schema:
     new_user=schemas.UserResponse(**response.json())
+    
     assert new_user.email=="test_user@pytest.com"
     
     print(response, response.json())
+
 
 # The fixtures run here (before each test)
 
@@ -42,6 +44,7 @@ def test_user_login(client,generate_user):# CALLS GENERATE USER AND WE GET THE R
 
     id=payload.get("user_id")
     print(f"user_id: {id}")
+
     assert id is not None
     
 
@@ -58,7 +61,6 @@ def test_user_login(client,generate_user):# CALLS GENERATE USER AND WE GET THE R
 def test_incorrect_login(client,data,status_code):
     response=client.post("/auth",data=data) #oatuh should be sent as data
     assert response.status_code==status_code
-
 
 
 

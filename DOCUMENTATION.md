@@ -1242,7 +1242,7 @@ This command will pick the current state of the DDBB and the models of sql alche
 - Real case scenario we have run couple of alembic commands in a given host with the postgre setup and now we change of host and we have an empty DDBB (Alembic commands from above).
 - now running the following command we can get the same state that in the ohter host: 
   - ``alembic upgrade head``
-- **NOTE:** We just have to install alembic, but not alembic init but upgrade head so alembic compares the status and its version (are uploaded in git) and updates the DDBB accordingly.
+- **NOTE:** We just have to install alembic, and not run *alembic init* but  **alembic upgrade head** so alembic compares the status and its version (are uploaded in git) and updates the DDBB accordingly.
 
 
 
@@ -1295,7 +1295,7 @@ services:
 ``engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)``
 - We need to update the .env and the config.py file as *localhost* cannot be used because of docker behavior and we need to set the service name of the DDBB in the connection string:
 ``engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")``
-- Docker Compose nijects the variables into the postgress by interpolating them.
+- Docker Compose injects the variables into the postgress by interpolating them.
 ### COMMANDS
 - Checking the logs:
   - docker ps -a
@@ -1304,6 +1304,17 @@ services:
   - docker compose up --build -d (in case you change the code , rebuild image)
   - docker-compose -f docker-compose.yaml up --build
   - docker exec -it <container-name> bash
+- Pushing an image and retagging (optional)
+  - docker login
+  - docker tag current/image-name:tag new/image-name:test-version 
+  - docker push new/image-name:test-version
+1. We have created the test docker-compose for testing purposes and for runing the postgres in a container so the process is quicker.
+   1. WE HAVE ADDED THE FOLLOWING:
+      1. NEW ENV .env.test
+      2. updated pydantic config and created a new class
+      3. updated connection string from alembic and database.py to use the new pydantyc settings_test class
+      4. created a new dockercompose for testing
+2. Alembic is executed in the api container via the script , that is picked up by the dockerfile (api-startup-sh.sh)
  
 # 16 Kubernetes && Sealed Secrets
 
@@ -1324,6 +1335,7 @@ assert 1==1 #This will not throw an error.
 
 ## 18 Testing with TestClient
 TestClient is FastApi utility that allows us to perform HTTP request to test our FastApi, API  functions.
+We have created the database test in the docker container to expedite the process of starting up postgres in windows. So currently in docker there are 2 databases like in the host , api and api_test  as the name points out api_test is the one used for testing.
   
 
 - We need to create a new database specific for testing so the tests do not interfere with the data of the database.
