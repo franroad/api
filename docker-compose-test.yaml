@@ -3,7 +3,7 @@ services:
     image: franint/api-repo:test-version # prioriza buscarla en remoto
     build:
       context: .
-      dockerfile: Dockerfile.api #Construimos la imagen y la guardamos con el nombre de arriba ↑↑
+      dockerfile: Dockerfile.api # si se usa --build Construimos la imagen y la guardamos con el nombre de arriba ↑↑
     ports:
       - 8000:8000 #IF EXPOSING EXTERNALLY NOT REQUIRED 8000 IS ENOUGH
     env_file: ".env.test"
