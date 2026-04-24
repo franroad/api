@@ -1,6 +1,6 @@
 services:
   api:
-    image: franint/api-repo:test-version # prioriza buscarla en remoto
+    image: franint/api-repo:test-version2 # prioriza buscarla en remoto
     build:
       context: .
       dockerfile: Dockerfile.api # si se usa --build Construimos la imagen y la guardamos con el nombre de arriba ↑↑
