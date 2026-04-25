@@ -119,7 +119,7 @@ def authorized_client(client,test_token):
 # useful for voting and update post amongt others
 @pytest.fixture
 def test_create_posts(fixture_login,db_test):
-    posts_data=[{
+    posts_data=[{ # THIS IS A LIST OF DICTIONARIES FULL PYTHON
         "title": "first title",
         "content":"first content",
         "user_id":fixture_login
@@ -136,7 +136,19 @@ def test_create_posts(fixture_login,db_test):
         "user_id":fixture_login
     }]
 
-    new_test_posts=[models.PostORM(**post)for post in posts_data]
+    # TRANSFORMATION INTO ORM OBJECT and creates a list
+    ## with ** it picks each key and value for inserting in the table
+
+
+
+    new_test_posts=[models.PostORM(**post)for post in posts_data] 
+
+    # another example
+    # posts_list=[]
+    # for post in posts_data:
+    #     posts_list.append(models.PostORM(**post))
+
+
 
     db_test.add_all(new_test_posts)
     db_test.commit()
