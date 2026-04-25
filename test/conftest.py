@@ -12,9 +12,9 @@ from app.config import settings,settings_test
 from app.database import get_db
 import pytest
 from app.database import Base
-from sqlalchemy import inspect
+from sqlalchemy import inspect,insert
 from alembic import command
-from app import schemas
+from app import schemas,models
 import jwt
 from app.oauth import create_access_token
 from test.test_users import test_user_login
@@ -60,12 +60,8 @@ client = TestClient(app)#Crea un cliente HTTP(TestClient) que permite hacer peti
 def client(db_test): # Recibe la session de pruebas (por el yield) ↑↑↑↑
     # Esta función reemplaza la dependencia get_db de FastAPI
     def override_get_db():
-        try:
-            # En lugar de devolver la sesión real, devolvemos la de pruebas
+        
             yield db_test
-        finally:
-            # Cerramos la sesión cuando el endpoint termina
-            db_test.close()
 
     # Sobrescribimos la dependencia original de FastAPI
     # Ahora cada vez que un endpoint llame a get_db, usará override_get_db
@@ -121,5 +117,29 @@ def authorized_client(client,test_token):
     return client
 
 # useful for voting and update post amongt others
-# @pytest.fixture
-# def test_create_post
+@pytest.fixture
+def test_create_posts(fixture_login,db_test):
+    posts_data=[{
+        "title": "first title",
+        "content":"first content",
+        "user_id":fixture_login
+
+    },{
+        "title": "first title",
+        "content":"2nd content",
+        "user_id":fixture_login
+
+
+    },{
+        "title": "first title",
+        "content":"3rd content",
+        "user_id":fixture_login
+    }]
+
+    new_test_posts=[models.PostORM(**post)for post in posts_data]
+
+    db_test.add_all(new_test_posts)
+    db_test.commit()
+    
+    posts=db_test.query(models.PostORM).all()
+    return posts
