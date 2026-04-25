@@ -60,8 +60,10 @@ client = TestClient(app)#Crea un cliente HTTP(TestClient) que permite hacer peti
 def client(db_test): # Recibe la session de pruebas (por el yield) ↑↑↑↑
     # Esta función reemplaza la dependencia get_db de FastAPI
     def override_get_db():
-        
+            
             yield db_test
+        
+            
 
     # Sobrescribimos la dependencia original de FastAPI
     # Ahora cada vez que un endpoint llame a get_db, usará override_get_db
