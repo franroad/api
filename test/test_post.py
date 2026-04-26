@@ -34,21 +34,27 @@ def test_non_existing_post(authorized_client,fix_create_posts):
     assert response.status_code==404
     print(f"Non existing post :{response.json()}")
 
-#Usando parameritrice con diccionario.
+#Usando parameritrice con diccionario. cada iteracion es un test independiente
 
 @pytest.mark.parametrize("payload", [
     {"title": "Post 1", "content": "C1", "published": False}, # Caso False
     {"title": "Post 2", "content": "C2", "published": True},  # Caso True
     {"title": "Post 3", "content": "C3"}                       # Caso Default (Omitido)
 ])
-def test_create_post_limpio(authorized_client, payload):
-    response = authorized_client.post("/posts/", json=payload)
+def test_create_post_limpio(authorized_client, payload,client):
+    response = client.post("/posts/", json=payload)
+    
+    
+    res_json=response.json()
+    
+   # COgemos el payload y seteamos el valor que debe tener si empty
+   # si pydantic hace su trabajo el assert pasa
+    
+    expected_val = payload.get("published", True) 
+    print(response.json())
     
     assert response.status_code == 201
-    assert response.json()["content"]==payload[2].content
-    
-    # Aquí está la clave: 
-    # Si 'published' no está en el payload, esperamos que sea True (por tu Pydantic)
-    # expected_val = payload.get("published", True) 
-    
-    # assert res_json["Post🪆"]["published"] == expected_val
+    assert res_json["published"] == expected_val
+    assert res_json ["title"]==payload["title"]
+    assert res_json["content"] == payload["content"]
+
