@@ -41,12 +41,12 @@ def test_non_existing_post(authorized_client,fix_create_posts):
     {"title": "Post 2", "content": "C2", "published": True},  # Caso True
     {"title": "Post 3", "content": "C3"}                       # Caso Default (Omitido)
 ])
-def test_create_post_limpio(authorized_client, payload,client):
-    response = client.post("/posts/", json=payload)
+def test_create_post_and_default(authorized_client, payload):
+    response = authorized_client.post("/posts/", json=payload)
     
     
     res_json=response.json()
-    
+
    # COgemos el payload y seteamos el valor que debe tener si empty
    # si pydantic hace su trabajo el assert pasa
     
@@ -58,3 +58,14 @@ def test_create_post_limpio(authorized_client, payload,client):
     assert res_json ["title"]==payload["title"]
     assert res_json["content"] == payload["content"]
 
+def test_unauthorized_add_post(client):
+    response=client.post("/posts/",json={"title":"not allowed","content":"not allowed"})
+    assert response.status_code==401
+    print(f"unauth add post res: {response.json()}")
+    print(f"status code: {response.status_code}")
+
+# def test_unauthorized_add_post(authorized_client):
+#     response=authorized_client.post("/posts/",json={"title":"not allowed","content":"not allowed"})
+#     assert response.status_code==401
+#     print(f"unauth add post res: {response.json()}")
+#     print(f"status code: {response.status_code}")
