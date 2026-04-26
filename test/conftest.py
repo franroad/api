@@ -120,7 +120,7 @@ def authorized_client(client,test_token):
 
 # useful for voting and update post amongt others
 @pytest.fixture
-def test_create_posts(fixture_login,db_test):
+def fix_create_posts(fixture_login,db_test):
     posts_data=[{ # THIS IS A LIST OF DICTIONARIES FULL PYTHON
         "title": "first title",
         "content":"first content",
