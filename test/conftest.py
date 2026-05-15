@@ -85,6 +85,14 @@ def generate_user(client):
     return new_user #as we are not using pydantic
                     # this is returning everything but not the id
 
+@pytest.fixture
+def test_user2(client):
+    new_data={"email":"test_user2@fixture.com","password":"1231"} # This is a DICT
+    response=client.post("user/add",json=(new_data))
+    new_user=response.json() # This response is also a dict
+    print (f"USER_ADD:  {response.json()}")
+    new_user['password']=new_data['password'] #Estamos haciendo un append anadiendo una key "password"
+    return new_user
 
 
 @pytest.fixture
@@ -99,6 +107,21 @@ def fixture_login(client, generate_user):
     id=payload.get("user_id")
     
     print(f"Fixture user_id: {id}")
+    return id # with an existing id , we can create the token below:
+
+
+@pytest.fixture
+def fixture_login_test2(client, test_user2):
+    response=client.post("/auth",data={"username": test_user2['email'], "password": test_user2['password']})
+    
+    token=schemas.Token(**response.json())
+    #print(f"info: {generate_user['email'],generate_user['password']}")
+    assert response.status_code==200
+    # Validate the Token
+    payload = jwt.decode(token.access_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    id=payload.get("user_id")
+    
+    print(f"Fixture user_id_user2: {id}")
     return id # with an existing id , we can create the token below:
     
 
@@ -120,9 +143,10 @@ def authorized_client(client,test_token):
 
 # useful for voting and update post amongt others
 @pytest.fixture
-def fix_create_posts(fixture_login,db_test):
-    posts_data=[{ # THIS IS A LIST OF DICTIONARIES FULL PYTHON
-        "title": "first title",
+def fix_create_posts(fixture_login,db_test,fixture_login_test2):
+    posts_data=[ # THIS IS A LIST OF DICTIONARIES FULL PYTHON
+        
+        {"title": "first title",
         "content":"first content",
         "user_id":fixture_login
 
@@ -136,7 +160,14 @@ def fix_create_posts(fixture_login,db_test):
         "title": "first title",
         "content":"3rd content",
         "user_id":fixture_login
-    }]
+
+    },{
+        
+        "title": "first title",
+        "content":"3rd content",
+        "user_id":fixture_login_test2
+    }
+    ]
 
     # TRANSFORMATION INTO ORM OBJECT and creates a list
     ## with ** it picks each key and value for inserting in the table
