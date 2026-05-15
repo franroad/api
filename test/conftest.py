@@ -80,7 +80,7 @@ def generate_user(client):
     new_data={"email":"test_user@fixture.com","password":"1231"} # This is a DICT
     response=client.post("user/add",json=(new_data))
     new_user=response.json() # This response is also a dict
-    print (f"USER_ADD:  {response.json()}")
+    #print (f"USER_ADD:  {response.json()}")
     new_user['password']=new_data['password'] #Estamos haciendo un append anadiendo una key "password"
     return new_user #as we are not using pydantic
                     # this is returning everything but not the id
@@ -90,7 +90,7 @@ def test_user2(client):
     new_data={"email":"test_user2@fixture.com","password":"1231"} # This is a DICT
     response=client.post("user/add",json=(new_data))
     new_user=response.json() # This response is also a dict
-    print (f"USER_ADD:  {response.json()}")
+    #print (f"USER_ADD:  {response.json()}")
     new_user['password']=new_data['password'] #Estamos haciendo un append anadiendo una key "password"
     return new_user
 
@@ -106,7 +106,7 @@ def fixture_login(client, generate_user):
     payload = jwt.decode(token.access_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
     id=payload.get("user_id")
     
-    print(f"Fixture user_id: {id}")
+    #print(f"Fixture user_id: {id}")
     return id # with an existing id , we can create the token below:
 
 
@@ -121,7 +121,7 @@ def fixture_login_test2(client, test_user2):
     payload = jwt.decode(token.access_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
     id=payload.get("user_id")
     
-    print(f"Fixture user_id_user2: {id}")
+    #print(f"Fixture user_id_user2: {id}")
     return id # with an existing id , we can create the token below:
     
 
