@@ -59,6 +59,7 @@
     - [Using Fixture to clear database](#using-fixture-to-clear-database)
       - [Fixture scope](#fixture-scope)
       - [Validating the Token](#validating-the-token)
+      - [Testing process](#testing-process)
 
 # 1 Coding CRUD
 
@@ -1355,6 +1356,11 @@ We have created the database test in the docker container to expedite the proces
 
 #### Validating the Token
 We deconde the token and validate if the token has the payload.
+
+#### Testing process
+  1. The tests are not included in the docker image. 
+  2. The tests are executed in the host, in order to make it more portable , the POSTGRES is running in a container and the test are performed from the host.
+  3. To achieve that a new pydantic class called [TestSettings](app/config.py) Was created and it reads from `env.test`  
 
 
 

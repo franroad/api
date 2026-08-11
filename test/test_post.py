@@ -172,8 +172,3 @@ def test_update_non_existing_post(fix_create_posts,authorized_client):
     
     assert response.status_code==404
     print(response.json())
-    
-    
-
-
-    
