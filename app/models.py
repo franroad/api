@@ -6,6 +6,9 @@ from sqlalchemy.sql.expression import text
 from sqlalchemy.orm import relationship
 
 
+
+# This is python with the sql-alchemy library
+
 #here we are creting another table to keep the old one and the new let`s name it posts_orm
 
 class PostORM(Base):

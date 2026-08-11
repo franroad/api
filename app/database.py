@@ -17,13 +17,13 @@ from .config import settings,settings_test
 # Creates a new SQLAlchemy Engine instance using the connection URL defined in SQLALCHEMY_DATABASE_URL.
 # The engine is responsible for managing connections to your PostgreSQL database,
 # including handling the connection pool, executing SQL statements, and managing overall communication with the database.
-
-#engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)#Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
+#The SessionLocal binds the engine with the sessions and allows the communication
+engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)#Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
 
 #this is for docker 
- #engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")
+#engine =create_engine( f"postgresql+psycopg2://{settings.DDBB_USER}:{settings.DDBB_PASSWORD}@{settings.DDBB_HOSTNAME}:{settings.DDBB_PORT}/{settings.DDBB_NAME}")
 #this is for docker_test 
-engine=create_engine( f"postgresql+psycopg2://{settings_test.DDBB_USER}:{settings_test.DDBB_PASSWORD}@{settings_test.DDBB_HOSTNAME}:{settings_test.DDBB_PORT}/{settings_test.DDBB_NAME}")
+#engine=create_engine( f"postgresql+psycopg2://{settings_test.DDBB_USER}:{settings_test.DDBB_PASSWORD}@{settings_test.DDBB_HOSTNAME}:{settings_test.DDBB_PORT}/{settings_test.DDBB_NAME}")
 SessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)#Asocia motor y sesion , permite crear sesiones usando el motor.
 
 Base = declarative_base()#contiene la info(metadata) de nuestros models en memoria , lo usa alembic para comparar con la DDBB
