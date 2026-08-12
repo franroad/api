@@ -11,7 +11,7 @@ on:
       - "linux"
 
 jobs: #Job= set of steps that run in the same machine. Each job can run in different runner if not specified
-  build: #Job name
+  test: #Job name
     env:
       DDBB_NAME: "NOT_USED"
       DDBB_USER: "NOT_USED"
@@ -35,8 +35,24 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
       MAIL_SSL_TLS: "False"
 
 
+
+:
     runs-on: ubuntu-latest
-    steps:
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER_TEST }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD_TEST }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB_TEST }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:   
       - name: pulling repo
         uses: actions/checkout@v7 #pre-build action for pulling 
       - name: setup-python 3.12
@@ -50,15 +66,6 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
         run: pip install -r "requirements.txt"
       - name: verify packages
         run: pip list 
-      - name: Start PostgreSQL 16
-        run: |
-          docker run -d \
-            --name postgres16 \
-            -e POSTGRES_USER=${{secrets.POSTGRES_USER_TEST}} \
-            -e POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD_TEST}} \
-            -e POSTGRES_DB=${{secrets.POSTGRES_DB_TEST}} \
-            -p 5432:5432 \
-            postgres:16
       - name: run alembic
         run: alembic upgrade head
 
