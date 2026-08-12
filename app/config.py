@@ -30,7 +30,7 @@ class TestSettings(BaseSettings):
         DDBB_USER : str = "False"
         DDBB_PASSWORD : str = "False"
         DDBB_HOSTNAME : str = "False"
-        DDBB_PORT : int = "False"
+        DDBB_PORT : int = 5432
         DDBB_PORT_HOST: int = 5432
         SECRET_KEY : str
         ALGORITHM : str
