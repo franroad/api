@@ -15,7 +15,7 @@ services:
   backend-DDBB:
     image: postgres:16
     ports:
-      - 5433:5432 #host_port:container_port # le asignamos el 5433 para que no interfiera con el postgres local
+      - 5432:5432 #host_port:container_port # le asignamos el 5433 para que no interfiera con el postgres local
     env_file: ".env.ddbb.test"
     # environment:
     #   - POSTGRES_PASSWORD=${DDBB_PASSWORD} #Docker-compose injects the variables into the env from the .env

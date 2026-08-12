@@ -12,6 +12,29 @@ on:
 
 jobs: #Job= set of steps that run in the same machine. Each job can run in different runner if not specified
   build: #Job name
+    env:
+      DDBB_NAME: "NOT USED"
+      DDBB_USER: "NOT USED"
+      DDBB_PASSWORD: "NOT USED"
+      DDBB_HOSTNAME: "NOT_USED"
+      DDBB_PORT: 0
+
+      SQLALCHEMY_DATABASE_URL: ${{secrets.SQLALCHEMY_DATABASE_URL}}
+      ALEMBIC_DATABASE_URL: ${{secrets.ALEMBIC_DATABASE_URL_TEST}}
+
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      ALGORITHM: "HS256"
+      ACCESS_TOKEN_EXPIRE_MINUTES: 15
+
+      MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+      MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+      MAIL_FROM: "fbernal.jmzafra@gmail.com"
+      MAIL_PORT: 2525
+      MAIL_SERVER: "smtp.mailmug.net"
+      MAIL_STARTTLS: "False"
+      MAIL_SSL_TLS: "False"
+
+
     runs-on: ubuntu-latest
     steps:
       - name: pulling repo
@@ -26,6 +49,23 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
       - name: install requirements
         run: pip install -r "requirements.txt"
       - name: verify packages
-        run: pip list
+        run: pip list 
+      - name: Start PostgreSQL 16
+        run: |
+          docker run -d \
+            --name postgres16 \
+            -e POSTGRES_USER=${{ secrets.POSTGRES_USER_TEST }} \
+            -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD_TEST }} \
+            -e POSTGRES_DB=${{ secrets.POSTGRES_DB_TEST }} \
+            -p 5432:5432 \
+            postgres:16
+      - name: run alembic
+        run: alembic upgrade head
+
+      # - name: pytest
+      #   run: |
+      #    pip install pytest
+      #    pytest -v -s test/
+  
 
         

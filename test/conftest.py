@@ -20,8 +20,8 @@ from app.oauth import create_access_token
 from test.test_users import test_user_login
 
 #engine = create_engine (settings.SQLALCHEMY_DATABASE_URL)
-# engine = create_engine(f'{settings.SQLALCHEMY_DATABASE_URL}_test') #Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
-engine =create_engine( f"postgresql+psycopg2://{settings_test.DDBB_USER}:{settings_test.DDBB_PASSWORD}@localhost:{settings_test.DDBB_PORT_HOST}/{settings_test.DDBB_NAME}")
+engine = create_engine(f'{settings.SQLALCHEMY_DATABASE_URL}_test') #Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
+#engine =create_engine( f"postgresql+psycopg2://{settings_test.DDBB_USER}:{settings_test.DDBB_PASSWORD}@localhost:{settings_test.DDBB_PORT_HOST}/{settings_test.DDBB_NAME}")
 
 
 TestingSessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)#(SessionFactory)Asocia motor y sesion , permite crear sesiones usando el motor.

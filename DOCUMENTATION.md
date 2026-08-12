@@ -62,6 +62,8 @@
       - [Testing process](#testing-process)
 - [18 CI/CD](#18-cicd)
   - [CI](#ci)
+    - [Env variables](#env-variables)
+    - [Use gihub secrets](#use-gihub-secrets)
 
 # 1 Coding CRUD
 
@@ -1367,8 +1369,13 @@ We deconde the token and validate if the token has the payload.
 # 18 CI/CD
 ## CI 
 1. create a folder called .github andn a subfodler called `Workflows`
-2. 
-
+2. Configure steps and jobs
+### Env variables
+- To be able to run pytest we need to provide the variables.
+  
+### Use gihub secrets
+- To use the envs, we should use github secrets and reference then into the code
+  `settings --> secrets`
 
 
   
