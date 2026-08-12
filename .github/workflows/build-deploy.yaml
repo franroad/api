@@ -21,6 +21,8 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
         with:
           python-version: '3.12'
       
+      - name: upgrade pip
+        run: python -m pip install --upgrade pip
       - name: install requirements
         run: pip install -r "requirements.txt"
       - name: verify packages
