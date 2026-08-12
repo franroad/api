@@ -18,6 +18,7 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
       DDBB_PASSWORD: "NOT_USED"
       DDBB_HOSTNAME: "NOT_USED"
       DDBB_PORT: 0
+      DDBB_PORT_HOST: "NOT_USED"
 
       SQLALCHEMY_DATABASE_URL: ${{secrets.SQLALCHEMY_DATABASE_URL}}
       ALEMBIC_DATABASE_URL: ${{secrets.ALEMBIC_DATABASE_URL_TEST}}

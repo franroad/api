@@ -31,7 +31,7 @@ class TestSettings(BaseSettings):
         DDBB_PASSWORD : str
         DDBB_HOSTNAME : str
         DDBB_PORT : int
-        DDBB_PORT_HOST:int
+        DDBB_PORT_HOST: int
         SECRET_KEY : str
         ALGORITHM : str
         ACCESS_TOKEN_EXPIRE_MINUTES : int
