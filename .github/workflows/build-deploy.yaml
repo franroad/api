@@ -10,11 +10,20 @@ on:
       - "prod"
       - "linux"
 
-jobs: #Job= set of steps that run in the same machine
+jobs: #Job= set of steps that run in the same machine. Each job can run in different runner if not specified
   build: #Job name
     runs-on: ubuntu-latest
     steps:
       - name: pulling repo
-        uses: actions/checkout@v3 #pre-build action for pulling 
-      - name: test
-        run: echo "hello"
+        uses: actions/checkout@v7 #pre-build action for pulling 
+      - name: setup-python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      
+      - name: install requirements
+        run: pip install -r "requirements.txt"
+      - name: verify packages
+        run: pip list
+
+        
