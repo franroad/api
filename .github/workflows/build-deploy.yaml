@@ -54,9 +54,9 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
         run: |
           docker run -d \
             --name postgres16 \
-            -e POSTGRES_USER=${{ secrets.POSTGRES_USER_TEST }} \
-            -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD_TEST }} \
-            -e POSTGRES_DB=${{ secrets.POSTGRES_DB_TEST }} \
+            -e POSTGRES_USER=${{secrets.POSTGRES_USER_TEST}} \
+            -e POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD_TEST}} \
+            -e POSTGRES_DB=${{secrets.POSTGRES_DB_TEST}} \
             -p 5432:5432 \
             postgres:16
       - name: run alembic
