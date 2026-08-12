@@ -1,0 +1,20 @@
+name: Build and Deploy code
+#on: [push, pull_request] 
+on:
+  push:
+    branches:
+      - "prod"
+      - "linux"
+  pull_request:
+    branches:
+      - "prod"
+      - "linux"
+
+jobs: #Job= set of steps that run in the same machine
+  build: #Job name
+    runs-on: ubuntu-latest
+    steps:
+      - name: pulling repo
+        uses: actions/checkout@v3 #pre-build action for pulling 
+      - name: test
+        run: echo "hello"

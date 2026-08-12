@@ -55,11 +55,13 @@
     - [COMMANDS](#commands)
 - [16 Kubernetes \&\& Sealed Secrets](#16-kubernetes--sealed-secrets)
 - [17 Testing Pytest](#17-testing-pytest)
-  - [18 Testing with TestClient](#18-testing-with-testclient)
+  - [17.1 Testing with TestClient](#171-testing-with-testclient)
     - [Using Fixture to clear database](#using-fixture-to-clear-database)
       - [Fixture scope](#fixture-scope)
       - [Validating the Token](#validating-the-token)
       - [Testing process](#testing-process)
+- [18 CI/CD](#18-cicd)
+  - [CI](#ci)
 
 # 1 Coding CRUD
 
@@ -1334,7 +1336,7 @@ assert 1==1 #This will not throw an error.
  - Command ``pytest --disable-warnings``
  - Command ``pytest -x`` x=stops when one test fails.
 
-## 18 Testing with TestClient
+## 17.1 Testing with TestClient
 TestClient is FastApi utility that allows us to perform HTTP request to test our FastApi, API  functions.
 We have created the database test in the docker container to expedite the process of starting up postgres in windows. So currently in docker there are 2 databases like in the host , api and api_test  as the name points out api_test is the one used for testing.
   
@@ -1362,6 +1364,10 @@ We deconde the token and validate if the token has the payload.
   2. The tests are executed in the host, in order to make it more portable , the POSTGRES is running in a container and the test are performed from the host.
   3. To achieve that a new pydantic class called [TestSettings](app/config.py) Was created and it reads from `env.test`  
 
+# 18 CI/CD
+## CI 
+1. create a folder called .github andn a subfodler called `Workflows`
+2. 
 
 
 
