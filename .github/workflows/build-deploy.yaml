@@ -13,9 +13,9 @@ on:
 jobs: #Job= set of steps that run in the same machine. Each job can run in different runner if not specified
   build: #Job name
     env:
-      DDBB_NAME: "NOT USED"
-      DDBB_USER: "NOT USED"
-      DDBB_PASSWORD: "NOT USED"
+      DDBB_NAME: "NOT_USED"
+      DDBB_USER: "NOT_USED"
+      DDBB_PASSWORD: "NOT_USED"
       DDBB_HOSTNAME: "NOT_USED"
       DDBB_PORT: 0
 
