@@ -1,24 +1,21 @@
+
+# This workflow is intended for pytest
 name: Build and Deploy code
 #on: [push, pull_request] 
 on:
   push:
     branches:
-      - "prod"
+      - "test_workflow"
       - "linux"
   pull_request:
     branches:
-      - "prod"
+      - "test_workflow"
       - "linux"
 
 jobs: #Job= set of steps that run in the same machine. Each job can run in different runner if not specified
   test: #Job name
     env:
-      DDBB_NAME: "NOT_USED"
-      DDBB_USER: "NOT_USED"
-      DDBB_PASSWORD: "NOT_USED"
-      DDBB_HOSTNAME: "NOT_USED"
-      DDBB_PORT: 0
-      DDBB_PORT_HOST: "NOT_USED"
+      
 
       SQLALCHEMY_DATABASE_URL: ${{secrets.SQLALCHEMY_DATABASE_URL}}
       ALEMBIC_DATABASE_URL: ${{secrets.ALEMBIC_DATABASE_URL_TEST}}

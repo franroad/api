@@ -1,11 +1,11 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    DDBB_NAME : str
-    DDBB_USER : str
-    DDBB_PASSWORD : str
-    DDBB_HOSTNAME : str
-    DDBB_PORT : int
+    DDBB_NAME : str = False
+    DDBB_USER : str = False
+    DDBB_PASSWORD : str = False
+    DDBB_HOSTNAME : str = False
+    DDBB_PORT : int = 5432
     SQLALCHEMY_DATABASE_URL : str
     ALEMBIC_DATABASE_URL: str
     SECRET_KEY : str
@@ -26,12 +26,12 @@ class Settings(BaseSettings):
 class TestSettings(BaseSettings):
 
     
-        DDBB_NAME : str
-        DDBB_USER : str
-        DDBB_PASSWORD : str
-        DDBB_HOSTNAME : str
-        DDBB_PORT : int
-        DDBB_PORT_HOST: int
+        DDBB_NAME : str = False
+        DDBB_USER : str = False
+        DDBB_PASSWORD : str = False
+        DDBB_HOSTNAME : str = False
+        DDBB_PORT : int = False
+        DDBB_PORT_HOST: int = 5432
         SECRET_KEY : str
         ALGORITHM : str
         ACCESS_TOKEN_EXPIRE_MINUTES : int
