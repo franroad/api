@@ -64,10 +64,10 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
       - name: run alembic
         run: alembic upgrade head
 
-      # - name: pytest
-      #   run: |
-      #    pip install pytest
-      #    pytest -v -s test/
+      - name: pytest
+        run: |
+         pip install pytest
+         pytest -v -s test/
   
 
         
