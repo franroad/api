@@ -6,9 +6,7 @@ on:
   push:
     tags:
       - "v*.*.*"
-    branches:
-      - "test_workflow"
-      - "linux"
+
   pull_request:
 
     branches:
@@ -36,6 +34,8 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
       MAIL_SSL_TLS: "False"
 
     runs-on: ubuntu-latest
+    if: github.ref_name == 'test_workflow' || github.ref_name == 'linux'
+
     services:
       postgres:
         image: postgres:16
