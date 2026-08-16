@@ -79,6 +79,10 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
     steps:
       - name: pulling repo
         uses: actions/checkout@v7 #pre-build action for pulling 
+
+      # 1. Set up QEMU for emulation support (allows building ARM on x86)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
         
       - name: login ghcr
         uses: docker/login-action@v4
@@ -106,6 +110,7 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
         with:
           context: .
           file: ./Dockerfile.api
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}     # Apply the generated string tags
           labels: ${{ steps.meta.outputs.labels }} # Bake the generated OCI metadata into the image
