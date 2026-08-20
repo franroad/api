@@ -7,3 +7,5 @@ __pycache__/
 api-crud*
 
 .env*
+.vscode*
+.vscode/
