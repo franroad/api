@@ -1,24 +1,21 @@
+
+# This workflow is intended for pytest
 name: Build and Deploy code
 #on: [push, pull_request] 
 on:
   push:
-    branches:
-      - "prod"
-      - "linux"
+    tags:
+      - "v*.*.*"
+
   pull_request:
+
     branches:
-      - "prod"
-      - "linux"
+      - "test_workflow"
 
 jobs: #Job= set of steps that run in the same machine. Each job can run in different runner if not specified
   test: #Job name
     env:
-      DDBB_NAME: "NOT_USED"
-      DDBB_USER: "NOT_USED"
-      DDBB_PASSWORD: "NOT_USED"
-      DDBB_HOSTNAME: "NOT_USED"
-      DDBB_PORT: 0
-      DDBB_PORT_HOST: "NOT_USED"
+      
 
       SQLALCHEMY_DATABASE_URL: ${{secrets.SQLALCHEMY_DATABASE_URL}}
       ALEMBIC_DATABASE_URL: ${{secrets.ALEMBIC_DATABASE_URL_TEST}}
@@ -36,6 +33,8 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
       MAIL_SSL_TLS: "False"
 
     runs-on: ubuntu-latest
+    #if: github.ref_name == 'test_workflow' || github.ref_name == 'linux' does not work with tags
+
     services:
       postgres:
         image: postgres:16
@@ -67,10 +66,58 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
       - name: run alembic
         run: alembic upgrade head
 
-      # - name: pytest
-      #   run: |
-      #    pip install pytest
-      #    pytest -v -s test/
+      - name: pytest
+        run: |
+         pip install pytest
+         pytest -v -s test/
+  Docker:
+
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: pulling repo
+        uses: actions/checkout@v7 #pre-build action for pulling 
+
+      # 1. Set up QEMU for emulation support (allows building ARM on x86)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+        
+      - name: login ghcr
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.REPO_TOKEN }}
+      - name: build image
+        uses: docker/setup-buildx-action@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          # we are just providing the format of the name for build and push
+          images: |
+            ghcr.io/${{ github.repository_owner }}/fastapi
+          tags: |
+            
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile.api
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}     # Apply the generated string tags
+          labels: ${{ steps.meta.outputs.labels }} # Bake the generated OCI metadata into the image
+
+    
+      
+      
+
   
 
         
