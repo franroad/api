@@ -11,7 +11,6 @@ on:
 
     branches:
       - "test_workflow"
-      - "linux"
 
 jobs: #Job= set of steps that run in the same machine. Each job can run in different runner if not specified
   test: #Job name
