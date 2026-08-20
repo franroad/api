@@ -14,3 +14,5 @@ Dockerfile.api
 **/test/
 test/
 is-ready-script.sh
+.env*
+example*
