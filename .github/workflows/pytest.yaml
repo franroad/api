@@ -71,12 +71,22 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
         run: |
          pip install pytest
          pytest -v -s test/
-  Docker:
+  Docker: #job name
+
 
     needs: test
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DEFAULT_BUMP: patch
+
       - name: pulling repo
         uses: actions/checkout@v7 #pre-build action for pulling 
 
@@ -101,9 +111,8 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
           images: |
             ghcr.io/${{ github.repository_owner }}/fastapi
           tags: |
-            
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=${{ steps.tag_version.outputs.new_tag }}
+            type=raw,value=latest
 
       - name: Build and Push
         uses: docker/build-push-action@v7
@@ -113,7 +122,7 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}     # Apply the generated string tags
-          labels: ${{ steps.meta.outputs.labels }} # Bake the generated OCI metadata into the image
+          labels: ${{ steps.meta.outputs.labels }} # Apply the generated OCI metadata into the image
 
     
       
