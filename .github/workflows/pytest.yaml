@@ -51,6 +51,8 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
     steps:   
       - name: pulling repo
         uses: actions/checkout@v7 #pre-build action for pulling 
+        with:
+          fetch-depth: 0
       - name: setup-python 3.12
         uses: actions/setup-python@v7
         with:
