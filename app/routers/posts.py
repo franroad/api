@@ -131,7 +131,7 @@ def get_post(id: int, db: Session = Depends(database.get_db)):#performing valida
         
 
 
-@router.delete("/{id}")
+@router.delete("/{id}",status_code=status.HTTP_200_OK)
 def delete_post(id: int, db: Session = Depends(database.get_db),current_user:str=Depends(oauth.get_current_user) ):
    
     post = db.query(models.PostORM).filter(models.PostORM.id == id).first()
@@ -140,7 +140,7 @@ def delete_post(id: int, db: Session = Depends(database.get_db),current_user:str
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with ID {id} not found") #First we check the existence
 
     if post.user_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Operation not allowed")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Operation not allowed")
 
     db.delete(post)
     db.commit()

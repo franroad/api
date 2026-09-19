@@ -18,3 +18,5 @@ is-ready-script.sh
 example*
 /docs
 *docs
+.env*
+example*

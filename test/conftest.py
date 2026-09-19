@@ -12,16 +12,16 @@ from app.config import settings,settings_test
 from app.database import get_db
 import pytest
 from app.database import Base
-from sqlalchemy import inspect
+from sqlalchemy import inspect,insert
 from alembic import command
-from app import schemas
+from app import schemas,models
 import jwt
 from app.oauth import create_access_token
 from test.test_users import test_user_login
 
 #engine = create_engine (settings.SQLALCHEMY_DATABASE_URL)
-# engine = create_engine(f'{settings.SQLALCHEMY_DATABASE_URL}_test') #Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
-engine =create_engine( f"postgresql+psycopg2://{settings_test.DDBB_USER}:{settings_test.DDBB_PASSWORD}@localhost:{settings_test.DDBB_PORT_HOST}/{settings_test.DDBB_NAME}")
+engine = create_engine(f'{settings.SQLALCHEMY_DATABASE_URL}_test') #Crea el motor (responsable conexion) de SQL ALCHEMY pero no lo ejecuta
+#engine =create_engine( f"postgresql+psycopg2://{settings_test.DDBB_USER}:{settings_test.DDBB_PASSWORD}@localhost:{settings_test.DDBB_PORT_HOST}/{settings_test.DDBB_NAME}")
 
 
 TestingSessionLocal=sessionmaker(autocommit=False,autoflush=False, bind=engine)#(SessionFactory)Asocia motor y sesion , permite crear sesiones usando el motor.
@@ -60,12 +60,10 @@ client = TestClient(app)#Crea un cliente HTTP(TestClient) que permite hacer peti
 def client(db_test): # Recibe la session de pruebas (por el yield) ↑↑↑↑
     # Esta función reemplaza la dependencia get_db de FastAPI
     def override_get_db():
-        try:
-            # En lugar de devolver la sesión real, devolvemos la de pruebas
+            
             yield db_test
-        finally:
-            # Cerramos la sesión cuando el endpoint termina
-            db_test.close()
+        
+            
 
     # Sobrescribimos la dependencia original de FastAPI
     # Ahora cada vez que un endpoint llame a get_db, usará override_get_db
@@ -82,11 +80,19 @@ def generate_user(client):
     new_data={"email":"test_user@fixture.com","password":"1231"} # This is a DICT
     response=client.post("user/add",json=(new_data))
     new_user=response.json() # This response is also a dict
-    print (f"USER_ADD:  {response.json()}")
+    #print (f"USER_ADD:  {response.json()}")
     new_user['password']=new_data['password'] #Estamos haciendo un append anadiendo una key "password"
     return new_user #as we are not using pydantic
                     # this is returning everything but not the id
 
+@pytest.fixture
+def test_user2(client):
+    new_data={"email":"test_user2@fixture.com","password":"1231"} # This is a DICT
+    response=client.post("user/add",json=(new_data))
+    new_user=response.json() # This response is also a dict
+    #print (f"USER_ADD:  {response.json()}")
+    new_user['password']=new_data['password'] #Estamos haciendo un append anadiendo una key "password"
+    return new_user
 
 
 @pytest.fixture
@@ -100,7 +106,22 @@ def fixture_login(client, generate_user):
     payload = jwt.decode(token.access_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
     id=payload.get("user_id")
     
-    print(f"Fixture user_id: {id}")
+    #print(f"Fixture user_id: {id}")
+    return id # with an existing id , we can create the token below:
+
+
+@pytest.fixture
+def fixture_login_test2(client, test_user2):
+    response=client.post("/auth",data={"username": test_user2['email'], "password": test_user2['password']})
+    
+    token=schemas.Token(**response.json())
+    #print(f"info: {generate_user['email'],generate_user['password']}")
+    assert response.status_code==200
+    # Validate the Token
+    payload = jwt.decode(token.access_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    id=payload.get("user_id")
+    
+    #print(f"Fixture user_id_user2: {id}")
     return id # with an existing id , we can create the token below:
     
 
@@ -121,5 +142,49 @@ def authorized_client(client,test_token):
     return client
 
 # useful for voting and update post amongt others
-# @pytest.fixture
-# def test_create_post
+@pytest.fixture
+def fix_create_posts(fixture_login,db_test,fixture_login_test2):
+    posts_data=[ # THIS IS A LIST OF DICTIONARIES FULL PYTHON
+        
+        {"title": "first title",
+        "content":"first content",
+        "user_id":fixture_login
+
+    },{
+        "title": "first title",
+        "content":"2nd content",
+        "user_id":fixture_login
+
+
+    },{
+        "title": "first title",
+        "content":"3rd content",
+        "user_id":fixture_login
+
+    },{
+        
+        "title": "first title",
+        "content":"3rd content",
+        "user_id":fixture_login_test2
+    }
+    ]
+
+    # TRANSFORMATION INTO ORM OBJECT and creates a list
+    ## with ** it picks each key and value for inserting in the table
+
+
+
+    new_test_posts=[models.PostORM(**post)for post in posts_data] 
+
+    # another example
+    # posts_list=[]
+    # for post in posts_data:
+    #     posts_list.append(models.PostORM(**post))
+
+
+
+    db_test.add_all(new_test_posts)
+    db_test.commit()
+    
+    posts=db_test.query(models.PostORM).all()
+    return posts

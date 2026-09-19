@@ -35,6 +35,7 @@ class PostResponse (BaseModel): #This model defines the response that the user w
      title: str
      content: str
      id: int
+     published:bool
      created_at: datetime
      user_id: int
      op:OpResponse
