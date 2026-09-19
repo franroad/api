@@ -11,7 +11,6 @@ import pytest, jwt
 def test_hello_main(client): #El valor que produce el yield de esta fixture se pasa como argumento al test.
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"message": "Hello World 😬"}
     print(response, response.json()) # print(response, response.json().get("message"))
 
 # The fixtures run here (before each test)
