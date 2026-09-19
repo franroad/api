@@ -80,8 +80,11 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
     steps:
 
       - name: pulling repo
-        uses: actions/checkout@v7 #pre-build action for pulling 
+        uses: actions/checkout@v7 #pre-build action for pulling
+        with:
+          fetch-depth: 0 #PICK ALL THE TAGS (default 1 last one)
       
+      # SETTINGS --> ACTIONS --> READ AND WRITE PERMISSION
       - name: Bump version and push tag
         id: tag_version
         uses: anothrNick/github-tag-action@1.67.0
