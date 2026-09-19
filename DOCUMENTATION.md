@@ -1487,7 +1487,7 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
             ghcr.io/${{ github.repository_owner }}/fastapi
           tags: |
             
-            type=semver,pattern={{version}}
+            type=semver,pattern={{version}} #looks for the tags
             type=semver,pattern={{major}}.{{minor}}
 
       - name: Build and Push
