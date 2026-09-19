@@ -49,4 +49,4 @@ def favicon():
 
 @app.get("/")#the route where to find the stuff /fran would be: http://127.0.0.1:8000/fran (decorator , endpoint)
 def root(): #root=funtion name (does not matter)
-    return {"message": "Hello World 😬 you are in the 2.0.2v"}
+    return {"message": "Hello World 😬 you are in the v2.0.2"}
