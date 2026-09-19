@@ -79,6 +79,9 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
 
     steps:
 
+      - name: pulling repo
+        uses: actions/checkout@v7 #pre-build action for pulling 
+      
       - name: Bump version and push tag
         id: tag_version
         uses: anothrNick/github-tag-action@1.67.0
@@ -86,9 +89,6 @@ jobs: #Job= set of steps that run in the same machine. Each job can run in diffe
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: patch
-
-      - name: pulling repo
-        uses: actions/checkout@v7 #pre-build action for pulling 
 
       # 1. Set up QEMU for emulation support (allows building ARM on x86)
       - name: Set up QEMU
