@@ -7,4 +7,13 @@ __pycache__/
 api-crud*
 .api*
 .env*
+#ignore venv
+venv*
+../.DS_Store
+__pycache__/
+*.DS_Store
+../.DS_Store*
+api-crud*
+.api*
+.env*
 .vscode*
